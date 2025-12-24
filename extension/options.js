@@ -983,6 +983,21 @@ class OptionsManager {
       else b.classList.remove('active');
     });
 
+    // Update page title
+    const titleMap = {
+      'api': 'Connect',
+      'sync': 'Sync Settings',
+      'ai': 'AI Organizer',
+      'tools': 'Tools',
+      'about': 'Guide & Support',
+      'general': 'General Settings',
+      'help': 'Help'
+    };
+    const titleEl = document.getElementById('active-tab-title');
+    if (titleEl && titleMap[key]) {
+      titleEl.textContent = titleMap[key];
+    }
+
     // Save state
     localStorage.setItem('lastActiveTab', key);
   }

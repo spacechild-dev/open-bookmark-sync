@@ -4,232 +4,102 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Open Bookmark Sync</title>
+  <link rel="stylesheet" href="modern-ui.css">
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      background: #f8f9fa;
-    }
-    .wrap {
       width: 320px;
-      padding: 16px;
-      background: white;
+      height: auto;
+      display: block;
+      overflow: visible;
     }
-
-    /* Header */
-    .header {
+    .popup-container {
+      padding: 16px;
+    }
+    .popup-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid #e9ecef;
     }
-    .header h1 {
-      font-size: 15px;
+    .popup-header h1 {
+      font-size: 16px;
       margin: 0;
-      font-weight: 600;
-      color: #2c3e50;
+      font-weight: 700;
+      color: var(--mantine-color-blue-6);
     }
-    .settings-icon {
-      background: none;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-      padding: 4px;
-      opacity: 0.6;
-      transition: opacity 0.2s;
-    }
-    .settings-icon:hover { opacity: 1; }
-
-    /* Status Card */
     .status-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
+      background: var(--mantine-color-blue-6);
       color: white;
+      padding: 16px;
+      border-radius: var(--mantine-radius-md);
+      margin-bottom: 16px;
+      box-shadow: var(--mantine-shadow-md);
     }
     .status-card.disconnected {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    }
-    .status-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
+      background: var(--mantine-color-gray-7);
     }
     .status-dot {
-      width: 12px;
-      height: 12px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.9);
-      box-shadow: 0 0 8px rgba(255,255,255,0.6);
-      animation: pulse 2s ease-in-out infinite;
+      background: white;
+      display: inline-block;
+      margin-right: 8px;
+      box-shadow: 0 0 8px rgba(255,255,255,0.8);
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-    .status-text {
-      font-size: 14px;
-      font-weight: 600;
-    }
-    .status-details {
-      font-size: 12px;
-      opacity: 0.9;
-      margin-top: 4px;
-    }
-    .next-sync {
-      font-size: 11px;
-      opacity: 0.8;
-      margin-top: 6px;
-      font-style: italic;
-    }
-
-    /* Primary Sync Button */
-    .sync-button {
+    .sync-btn-large {
       width: 100%;
-      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 16px;
+      height: 48px;
+      margin-bottom: 12px;
       font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .sync-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
-    }
-    .sync-button:active {
-      transform: translateY(0);
-    }
-    .sync-button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* Secondary Actions */
-    .secondary-actions {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-    .secondary-btn {
-      flex: 1;
-      background: #f8f9fa;
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: #495057;
-    }
-    .secondary-btn:hover {
-      background: #e9ecef;
-      border-color: #adb5bd;
-    }
-
-    /* Message */
-    .message {
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      margin-bottom: 12px;
-      display: none;
-    }
-    .message.success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-    .message.error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-    .message.show {
-      display: block;
-    }
-
-    /* Footer */
-    .footer {
-      border-top: 1px solid #e9ecef;
-      padding-top: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .footer-link {
-      font-size: 11px;
-      color: #6c757d;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .footer-link:hover {
-      color: #495057;
-    }
-    .version {
-      font-size: 10px;
-      color: #adb5bd;
     }
   </style>
   <script defer src="oauth.js"></script>
   <script defer src="popup.js"></script>
 </head>
 <body>
-  <div class="wrap">
+  <div class="popup-container">
     <!-- Header -->
-    <div class="header">
-      <h1>🔄 Bookmark Sync</h1>
-      <button id="openSettings" class="settings-icon" title="Open Settings">⚙️</button>
+    <div class="popup-header">
+      <h1>Open Bookmark Sync</h1>
+      <button id="openSettings" class="button secondary small" title="Open Settings" style="padding: 0 8px;">
+        <img src="icons/settings.svg" alt="" style="width: 16px; height: 16px;">
+      </button>
     </div>
 
     <!-- Status Card -->
     <div id="statusCard" class="status-card">
-      <div class="status-row">
-        <div class="status-dot"></div>
-        <div class="status-text" id="statusText">Checking status...</div>
+      <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">
+        <span class="status-dot"></span>
+        <span id="statusText">Checking status...</span>
       </div>
-      <div class="status-details" id="statusDetails"></div>
-      <div class="next-sync" id="nextSync"></div>
+      <div id="statusDetails" style="font-size: 12px; opacity: 0.9;"></div>
+      <div id="nextSync" style="font-size: 11px; opacity: 0.7; margin-top: 8px;"></div>
     </div>
 
     <!-- Message -->
-    <div id="message" class="message"></div>
+    <div id="message" class="status hidden" style="margin-bottom: 12px;"></div>
 
     <!-- Primary Action -->
-    <button id="syncNow" class="sync-button">
-      <span>🔄</span>
-      <span>Sync Now</span>
+    <button id="syncNow" class="button primary sync-btn-large">
+      <img src="icons/sync.svg" alt="" style="width: 18px; height: 18px; filter: brightness(0) invert(1);">
+      Sync Now
     </button>
 
     <!-- Secondary Actions -->
-    <div id="secondaryActions" class="secondary-actions">
-      <button id="authenticate" class="secondary-btn">🔑 Connect</button>
-      <button id="logout" class="secondary-btn" style="display:none;">🚪 Logout</button>
+    <div id="secondaryActions" style="display: flex; gap: 8px; margin-bottom: 16px;">
+      <button id="authenticate" class="button secondary" style="flex: 1;">Connect</button>
+      <button id="logout" class="button secondary" style="flex: 1; display: none;">Logout</button>
     </div>
 
     <!-- Footer -->
-    <div class="footer">
-      <div>
-        <a id="siteLink" class="footer-link" href="#" target="_blank" rel="noopener noreferrer">Website</a>
-        <span style="color: #dee2e6; margin: 0 6px;">|</span>
-        <a id="bmcLink" class="footer-link" href="#" target="_blank" rel="noopener noreferrer">Support</a>
+    <div style="border-top: 1px solid var(--mantine-color-gray-2); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+      <div style="font-size: 11px;">
+        <a id="siteLink" href="#" target="_blank" style="color: var(--mantine-color-gray-7); text-decoration: none;">Website</a>
+        <span style="color: var(--mantine-color-gray-3); margin: 0 4px;">•</span>
+        <a id="bmcLink" href="#" target="_blank" style="color: var(--mantine-color-gray-7); text-decoration: none;">Support</a>
       </div>
-      <div class="version">v1.3.0</div>
+      <div style="font-size: 10px; color: #adb5bd;">v1.3.2</div>
     </div>
   </div>
 </body>

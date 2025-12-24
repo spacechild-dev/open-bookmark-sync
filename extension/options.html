@@ -4,100 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Open Bookmark Sync - Settings</title>
-    <style>
-        :root {
-            --control-h: 35px;
-            --space-1: 8px;
-            --space-2: 13px; /* ~8 * 1.618 */
-            --space-3: 21px; /* ~13 * 1.618 */
-            --space-4: 34px; /* ~21 * 1.618 */
-            --border-soft: #edf0f5;
-            --text: #2f3137;
-            --text-muted: #666;
-            --panel-bg: #ffffff;
-            --header-h: 72px;
-            --sidebar-w: 240px;
-            --notification-h: 0px; /* dynamic notification bar height */
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 16px;
-            background-color: #f5f5f5;
-            font-size: 13px;
-            line-height: 1.55;
-            color: var(--text);
-        }
+    <link rel="stylesheet" href="modern-ui.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Sidebar -->
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-text">Open Bookmark Sync</div>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="side-link active" data-tab="api">
+                    <img src="icons/connect.svg" alt="" class="icon">
+                    Connect
+                </button>
+                <button class="side-link" data-tab="sync">
+                    <img src="icons/settings.svg" alt="" class="icon">
+                    Sync Settings
+                </button>
+                <button class="side-link" data-tab="ai">
+                    <img src="icons/ai.svg" alt="" class="icon">
+                    AI Organizer
+                </button>
+                <button class="side-link" data-tab="tools">
+                    <img src="icons/tools.svg" alt="" class="icon">
+                    Tools
+                </button>
+                <button class="side-link" data-tab="about">
+                    <img src="icons/help.svg" alt="" class="icon">
+                    Guide & Support
+                </button>
+            </nav>
+            <div style="padding: 20px; border-top: 1px solid var(--mantine-color-gray-2);">
+                <a href="https://github.com/spacechild-dev/open-bookmark-sync" target="_blank" class="side-link" style="text-decoration: none;">
+                    <img src="icons/github.svg" alt="" class="icon">
+                    GitHub
+                </a>
+            </div>
+        </aside>
 
-        /* Welcome Modal Styles */
-        .welcome-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 10000;
-            animation: fadeIn 0.3s ease;
-        }
-        .welcome-overlay.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .welcome-modal {
-            background: white;
-            border-radius: 16px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideUp 0.3s ease;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .welcome-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 32px;
-            text-align: center;
-            border-radius: 16px 16px 0 0;
-        }
-        .welcome-header h1 {
-            margin: 0 0 12px 0;
-            font-size: 28px;
-            color: white;
-        }
-        .welcome-header p {
-            margin: 0;
-            opacity: 0.95;
-            font-size: 14px;
-        }
-        .welcome-content {
-            padding: 32px;
-        }
-        .welcome-step {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 28px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            transition: all 0.2s;
-        }
-        .welcome-step:hover {
-            background: #e9ecef;
-            transform: translateX(4px);
-        }
-        .step-number {
+        <!-- Main Content -->
+        <main id="main-content">
+            <header class="content-header">
+                <h1 class="page-title" id="active-tab-title">Connect</h1>
+                <div id="header-actions">
+                    <button id="fabSync" class="button primary">
+                        <img src="icons/sync.svg" alt="" style="width: 16px; height: 16px; filter: brightness(0) invert(1);">
+                        Sync Now
+                    </button>
+                </div>
+            </header>
+            
+            <div class="scroll-area">
+                <!-- Content panels will go here -->
+
             flex-shrink: 0;
             width: 48px;
             height: 48px;
@@ -1538,110 +1498,6 @@
         </div>
     </div>
 
-    <div class="container">
-        <div class="header">
-            <div style="display: flex; align-items: center; gap: 16px;">
-                <h1>Open Bookmark Sync</h1>
-                <div id="nextSyncCountdown" style="font-size: 13px; color: #666; display: none;">
-                    Next sync in: <span id="countdownTimer" style="font-weight: 600; color: var(--accent);">--:--</span>
-                </div>
-                <div id="quickStatusBadges" style="display: flex; gap: 6px; font-size: 11px;">
-                    <span id="quietHoursBadge" style="display: none; background: #f59e0b; color: white; padding: 3px 8px; border-radius: 12px; font-weight: 600;">🌙 Quiet</span>
-                    <span id="lowBatteryBadge" style="display: none; background: #dc3545; color: white; padding: 3px 8px; border-radius: 12px; font-weight: 600;">🔋 Low</span>
-                    <span id="meteredBadge" style="display: none; background: #0dcaf0; color: white; padding: 3px 8px; border-radius: 12px; font-weight: 600;">📶 Metered</span>
-                </div>
-            </div>
-            <div class="header-actions">
-                <a id="siteLink" class="header-link" href="#" target="_blank" rel="noopener noreferrer">
-                    <img src="icons/home.svg" alt="" class="icon">
-                    <span>Website</span>
-                </a>
-                <a href="mailto:dagkan@spacechild.dev?subject=Raindrop%20Browser%20Sync%20-%20Issue%20Report&body=Hi%2C%0A%0AI%20found%20an%20issue%20with%20the%20Raindrop%20Browser%20Sync%20extension%3A%0A%0A%5BPlease%20describe%20the%20issue%20here%5D%0A%0AThanks%21" class="header-link">
-                    <img src="icons/mail.svg" alt="" class="icon">
-                    <span>Report Issue</span>
-                </a>
-                <a href="https://github.com/sponsors/spacechild-dev" class="header-link primary" target="_blank" rel="noopener noreferrer">
-                    <img src="icons/heart.svg" alt="" class="icon">
-                    <span>Sponsor</span>
-                </a>
-            </div>
-        </div>
-
-        
-
-        <div class="main">
-            <nav class="sidebar" aria-label="Sidebar Navigation">
-                <!-- Raindrop.io Sync - Always visible -->
-                <div class="sidebar-section">
-                    <div class="sidebar-title">Raindrop.io Sync</div>
-                    <div class="sidebar-links">
-                        <button class="side-link" data-tab="api">
-                            <img src="icons/connect.svg" alt="" class="icon">
-                            Connect
-                        </button>
-                        <button class="side-link" data-tab="sync">
-                            <img src="icons/sync.svg" alt="" class="icon">
-                            Sync Settings
-                        </button>
-                    </div>
-                </div>
-
-                <!-- AI Organization - TEMPORARILY DISABLED -->
-                <!--
-                <div class="sidebar-section">
-                    <div class="sidebar-title">AI Organization</div>
-                    <div class="sidebar-links">
-                        <button class="side-link" data-tab="ai">
-                            <img src="icons/ai.svg" alt="" class="icon">
-                            AI Organizer
-                        </button>
-                    </div>
-                </div>
-                -->
-
-                <!-- More - Collapsible -->
-                <div class="sidebar-section">
-                    <div class="sidebar-title collapsible" data-section="more">
-                        <span>More</span>
-                        <img src="icons/chevron.svg" alt="" class="collapse-icon" style="width: 10px; height: 10px;">
-                    </div>
-                    <div class="sidebar-links" data-links="more">
-                        <button class="side-link" data-tab="tools">
-                            <img src="icons/tools.svg" alt="" class="icon">
-                            Tools
-                        </button>
-                        <button class="side-link" data-tab="general">
-                            <img src="icons/settings.svg" alt="" class="icon">
-                            Settings
-                        </button>
-                        <button class="side-link" data-tab="help">
-                            <img src="icons/help.svg" alt="" class="icon">
-                            Help
-                        </button>
-                    </div>
-                </div>
-                <div style="padding: 16px 10px; margin-top: auto; border-top: 1px solid #e9ecef;">
-                    <div style="font-size: 11px; color: #6c757d; text-align: center;">
-                        <div style="margin-bottom: 4px;">Open Bookmark Sync</div>
-                        <div style="font-weight: 600;">v1.3.0</div>
-                    </div>
-                </div>
-            </nav>
-
-            <!-- Floating Action Buttons -->
-            <div id="floatingActions" style="position: fixed; bottom: 24px; right: 32px; display: flex; flex-direction: column; gap: 12px; z-index: 1000;">
-                <button id="fabSync" class="button btn-lg primary" title="Sync Now (Ctrl+S)" style="box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                    <img src="icons/sync.svg" alt="" style="width: 16px; height: 16px; filter: brightness(0) invert(1); margin-right: 8px;">
-                    Sync Now
-                </button>
-                <button id="fabBackup" class="button btn-lg secondary" title="Backup Now (Ctrl+B)" style="box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                    <img src="icons/layers.svg" alt="" style="width: 16px; height: 16px; margin-right: 8px;">
-                    Backup Now
-                </button>
-            </div>
-
-            <div class="main-content">
-                <div class="tab-content">
         <div id="statusMessage" class="status hidden" style="position: sticky; top: 0; z-index: 5; margin: 0 0 10px 0;"></div>
 
 
@@ -2460,6 +2316,10 @@
                 <button id="welcomeStart" class="welcome-btn primary">Let's Get Started!</button>
             </div>
         </div>
+    </div>
+
+            </div>
+        </main>
     </div>
 
     <script src="oauth.js"></script>
