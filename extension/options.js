@@ -4297,11 +4297,9 @@ class OptionsManager {
   }
 
   clearUserInfo() {
-    if (this.elements.userInfo) {
-      this.elements.userInfo.classList.add('hidden');
-      this.elements.userInfo.innerHTML = '';
-    }
-    // Also reset authStatusText when clearing user info
+          if (this.elements.userInfo) {
+            this.elements.userInfo.classList.add('hidden');
+          }    // Also reset authStatusText when clearing user info
     if (this.elements.authStatusText) {
       this.elements.authStatusText.textContent = 'Not authenticated';
     }
