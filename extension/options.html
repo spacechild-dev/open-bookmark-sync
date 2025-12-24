@@ -139,10 +139,81 @@
                     <!-- AI Organizer Content -->
                 </div>
                 <div class="tab-panel" id="tab-tools" data-tab="tools">
-                    <!-- Tools Content -->
+                    <div class="card">
+                        <h2 class="card-title">Backup & Restore</h2>
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="font-size: 14px; margin-bottom: 12px;">Manual Backup</h3>
+                            <div style="display: flex; gap: 8px;">
+                                <button id="createBackup" class="button primary">Create Backup Now</button>
+                                <button id="downloadBackupFile" class="button secondary">Download JSON</button>
+                            </div>
+                            <div class="help-text">Create a full backup of your current bookmarks.</div>
+                        </div>
+
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="font-size: 14px; margin-bottom: 12px;">Restore</h3>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <button id="restoreFromFile" class="button secondary">Restore from File</button>
+                                <input type="file" id="restoreFile" accept=".json" style="display: none;">
+                                <button id="restoreLastBackup" class="button secondary">Restore Last Auto-Backup</button>
+                            </div>
+                            <div class="help-text">Restore bookmarks from a previous backup file or the last automatic backup.</div>
+                        </div>
+
+                        <div>
+                            <h3 style="font-size: 14px; margin-bottom: 12px;">Auto-Backups</h3>
+                            <div id="autoBackupsList" style="border: 1px solid var(--mantine-color-gray-3); border-radius: var(--mantine-radius-sm); max-height: 200px; overflow-y: auto; padding: 8px; background-color: var(--mantine-color-gray-0);">
+                                <div class="help-text" style="padding: 8px;">No automatic backups found.</div>
+                            </div>
+                            <div style="margin-top: 8px; display: flex; justify-content: flex-end; gap: 8px;">
+                                <button id="refreshAutoBackups" class="button secondary small">Refresh</button>
+                                <button id="clearOldAutoBackups" class="button secondary small">Clear Old</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="card-title">Cleanup Tools</h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                <button id="scanDuplicates" class="button primary" style="width: 100%;">Scan for Duplicates</button>
+                                <div class="help-text">Find and remove duplicate bookmarks.</div>
+                            </div>
+                            <div>
+                                <button id="cleanEmptyFolders" class="button secondary" style="width: 100%;">Clean Empty Folders</button>
+                                <div class="help-text">Remove folders that contain no bookmarks.</div>
+                            </div>
+                        </div>
+                        <div id="duplicateStatus" class="status hidden">
+                            <span id="duplicateStatusText"></span>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="tab-panel" id="tab-about" data-tab="about">
-                    <!-- Guide & Support Content -->
+                    <div class="card">
+                        <h2 class="card-title">Sync History</h2>
+                        <div id="syncHistoryTimeline" style="border: 1px solid var(--mantine-color-gray-3); border-radius: var(--mantine-radius-sm); height: 200px; overflow-y: auto; padding: 12px; background-color: var(--mantine-color-gray-0); font-family: monospace; font-size: 12px;">
+                            <div style="color: var(--mantine-color-gray-6);">No sync history available.</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="card-title">Activity Log</h2>
+                        <div id="activityLogContainer" style="border: 1px solid var(--mantine-color-gray-3); border-radius: var(--mantine-radius-sm); height: 200px; overflow-y: auto; padding: 12px; background-color: var(--mantine-color-gray-0); font-family: monospace; font-size: 12px;">
+                            <div style="color: var(--mantine-color-gray-6);">No activity recorded.</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="card-title">About & Support</h2>
+                        <p>Open Bookmark Sync v1.3.2</p>
+                        <div style="display: flex; gap: 12px; margin-top: 16px;">
+                            <a href="https://spacechild.dev" target="_blank" class="button secondary">Website</a>
+                            <a href="https://github.com/spacechild-dev/open-bookmark-sync" target="_blank" class="button secondary">GitHub</a>
+                            <a href="https://github.com/spacechild-dev/open-bookmark-sync/issues" target="_blank" class="button secondary">Report Issue</a>
+                        </div>
+                    </div>
                 </div>
 
             </div>
