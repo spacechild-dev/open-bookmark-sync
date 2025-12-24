@@ -6,8 +6,6 @@ workers_dev = true
 [vars]
 # Non-secret debug flag to verify bindings are passed in Git deploys.
 X_CHECK = "1"
-
-# Add these as plain-text variables in the Cloudflare dashboard or via `wrangler secret put`
-# RAINDROP_CLIENT_ID
-# RAINDROP_CLIENT_SECRET
-# SESSION_SECRET
+RAINDROP_CLIENT_ID = "68d7deb75430135b7fc617bc"
+RAINDROP_CLIENT_SECRET = "67dbd5d5-1f4d-477a-8d19-9fa8c8f3d98c"
+SESSION_SECRET = "b4a07d6b8c19a9a016625a666e1e83a6"
