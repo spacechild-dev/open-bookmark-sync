@@ -2,7 +2,7 @@
 
 class OptionsManager {
   constructor() {
-    this.oauth = new RaindropOAuth();
+    this.oauth = new GoogleOAuth();
     this.messageQueue = [];
     this.currentMessageTimeout = null;
 
@@ -172,7 +172,7 @@ class OptionsManager {
   bindEvents() {
     const E = this.elements;
     E.saveConfig && E.saveConfig.addEventListener('click', () => this.saveConfiguration());
-    E.authenticateBtn && E.authenticateBtn.addEventListener('click', () => this.authenticate());
+    E.authenticateBtn && E.authenticateBtn.addEventListener('click', () => this.oauth.startAuthFlow());
     E.testConnection && E.testConnection.addEventListener('click', () => this.testConnection());
     E.logout && E.logout.addEventListener('click', () => this.logout());
     E.syncNow && E.syncNow.addEventListener('click', () => this.syncNow());

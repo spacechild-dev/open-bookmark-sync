@@ -10,12 +10,18 @@
     "alarms",
     "identity"
   ],
-
+  "oauth2": {
+    "client_id": "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive.file"
+    ]
+  },
   "host_permissions": [
     "https://api.raindrop.io/*",
     "https://raindrop.io/*",
     "https://*.workers.dev/*",
-    "https://*.spacechild.dev/*"
+    "https://*.spacechild.dev/*",
+    "https://www.googleapis.com/*"
   ],
 
   "background": {
