@@ -369,5 +369,31 @@ class RaindropOAuth {
   }
 }
 
+// Google OAuth2 flow for Drive Sync
+class GoogleOAuth {
+  async getToken(interactive = true) {
+    return new Promise((resolve, reject) => {
+      chrome.identity.getAuthToken({ interactive }, (token) => {
+        if (chrome.runtime.lastError) {
+          if (!interactive) return resolve(null);
+          reject(new Error(chrome.runtime.lastError.message));
+        } else {
+          resolve(token);
+        }
+      });
+    });
+  }
+
+  async logout() {
+    const token = await this.getToken(false);
+    if (token) {
+      await fetch(`https://accounts.google.com/o/oauth2/revoke?token=${token}`);
+      await new Promise(resolve => chrome.identity.removeCachedAuthToken({ token }, resolve));
+    }
+    return true;
+  }
+}
+
 // Export for use in other modules
 window.RaindropOAuth = RaindropOAuth;
+window.GoogleOAuth = GoogleOAuth;
