@@ -84,15 +84,15 @@
                           </select>
                           <div class="help-text">Choose how to authenticate with Raindrop.io. Managed OAuth is safer and easier.</div>
                       </div>
-                      <div id="authStatus" class="auth-status">
-                          <div id="statusIndicator" class="status-indicator disconnected"></div>
-                          <span id="authStatusText">Not authenticated</span>
-                          <div id="statusDetails" class="status-details hidden"></div>
-                          <div id="authProgress" class="progress-bar hidden">
-                              <div id="authProgressFill" class="progress-bar-fill"></div>
-                          </div>
-                      </div>
-                      <div id="authButtons" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                                  <div id="authStatus" class="auth-status">
+                                      <div id="statusIndicator" class="status-indicator disconnected"></div>
+                                      <span id="authStatusText">Not authenticated</span>
+                                      <div id="userInfo"></div>
+                                      <div id="statusDetails" class="status-details hidden"></div>
+                                      <div id="authProgress" class="progress-bar hidden">
+                                          <div id="authProgressFill" class="progress-bar-fill"></div>
+                                      </div>
+                                  </div>                      <div id="authButtons" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
                           <button id="authenticateBtn" class="button primary">Authenticate with Raindrop</button>
                           <button id="testConnection" class="button secondary">Test Connection</button>
                           <button id="logout" class="button danger hidden">Logout</button>
