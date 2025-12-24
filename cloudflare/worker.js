@@ -74,7 +74,7 @@ export default {
     const statePayload = { ext_redirect: extRedirect, nonce: crypto.getRandomValues(new Uint32Array(1))[0].toString(16), t: Date.now() };
     const state = this._b64urlEncode(JSON.stringify(statePayload));
 
-    const authorize = new URL('https://api.raindrop.io/v1/oauth/authorize');
+    const authorize = new URL('https://raindrop.io/oauth/authorize');
     authorize.searchParams.set('client_id', env.RAINDROP_CLIENT_ID);
     authorize.searchParams.set('redirect_uri', `${base}/auth/callback`);
     authorize.searchParams.set('response_type', 'code');
