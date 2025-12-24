@@ -56,872 +56,136 @@
             </header>
             
             <div class="scroll-area">
-                <!-- Content panels will go here -->
+                <div id="statusMessage" class="status hidden" style="position: sticky; top: 0; z-index: 5; margin: 0 0 10px 0;"></div>
+
+                <!-- Closeable Privacy Notice -->
+                <div id="privacyNotice" class="card" style="border: 1px solid #e8f4f8; background: #f8fcff; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+                        <div>
+                            <h3 style="margin: 0 0 8px 0; color: #0066cc;">🔒 Privacy & Security</h3>
+                            <div class="help-text" style="margin: 0;">
+                                <strong>No telemetry or tracking:</strong> This extension does not collect any usage data, analytics, or personal information.
+                                All data stays on your device and your chosen sync service (Raindrop.io).
+                                Authentication tokens are stored locally in Chrome's secure storage.
+                            </div>
+                        </div>
+                        <button id="closePrivacyNotice" type="button" style="background: none; border: none; font-size: 18px; color: #666; cursor: pointer; padding: 4px; margin-left: 12px;" title="Close privacy notice">×</button>
+                    </div>
+                </div>
+
+                <div class="tab-panel active" id="tab-api" data-tab="api">
+                    <div class="card">
+                      <h2 class="card-title">Authentication</h2>
+                      <div id="authMethodGroup" class="form-group">
+                          <label for="authMethod">Authentication Method</label>
+                          <select id="authMethod">
+                              <option value="managed" selected>Managed OAuth (Recommended)</option>
+                              <option value="manual">Manual Configuration</option>
+                          </select>
+                          <div class="help-text">Choose how to authenticate with Raindrop.io. Managed OAuth is safer and easier.</div>
+                      </div>
+                      <div id="authStatus" class="auth-status">
+                          <div id="statusIndicator" class="status-indicator disconnected"></div>
+                          <span id="authStatusText">Not authenticated</span>
+                          <div id="statusDetails" class="status-details hidden"></div>
+                          <div id="authProgress" class="progress-bar hidden">
+                              <div id="authProgressFill" class="progress-bar-fill"></div>
+                          </div>
+                      </div>
+                      <div id="authButtons" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                          <button id="authenticateBtn" class="button primary">Authenticate with Raindrop</button>
+                          <button id="testConnection" class="button secondary">Test Connection</button>
+                          <button id="logout" class="button danger hidden">Logout</button>
+                      </div>
+                    </div>
+                    
+                    <div id="manualConfigSection" class="card hidden">
+                        <h2 class="card-title">Manual Configuration</h2>
+                        <div id="manualConfigDetails">
+                            <div id="clientIdGroup" class="form-group">
+                                <label for="clientId">Client ID</label>
+                                <div class="input-row">
+                                    <input type="password" id="clientId" placeholder="Enter your Raindrop Client ID">
+                                    <button id="toggleClientId" type="button" class="toggle-eye" aria-label="Show/Hide">Show</button>
+                                </div>
+                                <div class="help-text">Stored locally via Chrome storage. Hidden by default for privacy.</div>
+                            </div>
+                            <div id="clientSecretGroup" class="form-group">
+                                <label for="clientSecret">Client Secret</label>
+                                <div class="input-row">
+                                    <input type="password" id="clientSecret" placeholder="Enter your Raindrop Client Secret">
+                                    <button id="toggleClientSecret" type="button" class="toggle-eye" aria-label="Show/Hide">Show</button>
+                                </div>
+                                <div class="help-text">Do not share your client secret.</div>
+                            </div>
+                            <div id="redirectUriGroup" class="form-group">
+                                <label for="redirectUri">Redirect URI</label>
+                                <div class="input-row">
+                                    <input type="url" id="redirectUri" class="pre-filled" placeholder="Extension identity redirect (auto)">
+                                    <button id="redirectReset" type="button" class="toggle-eye" aria-label="Reset to default">Reset</button>
+                                </div>
+                            </div>
+                            <div id="saveConfigSection" style="margin-top: 16px;">
+                                <button id="saveConfig" class="button">Save Configuration</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="tab-sync" data-tab="sync">
+                    <!-- Sync Settings Content -->
+                </div>
+                <div class="tab-panel" id="tab-ai" data-tab="ai">
+                    <!-- AI Organizer Content -->
+                </div>
+                <div class="tab-panel" id="tab-tools" data-tab="tools">
+                    <!-- Tools Content -->
+                </div>
+                <div class="tab-panel" id="tab-about" data-tab="about">
+                    <!-- Guide & Support Content -->
+                </div>
+
             </div>
         </main>
     </div>
 
     <!-- Welcome Modal -->
-    <div id="welcomeOverlay" class="welcome-overlay">
+    <div id="welcomeOverlay" class="welcome-overlay hidden">
         <div class="welcome-modal">
             <div class="welcome-header">
                 <h1>👋 Welcome to Open Bookmark Sync!</h1>
-                <p>Synchronize your Raindrop.io collections with your browser seamlessly.</p>
+                <p>Let's get you set up in just 3 easy steps.</p>
             </div>
             <div class="welcome-content">
                 <div class="welcome-step">
                     <div class="step-number">1</div>
                     <div class="step-content">
                         <h3>Connect to Raindrop.io</h3>
-                        <p>Go to the <strong>Connect</strong> tab and click "Authenticate with Raindrop". Using Managed OAuth (recommended) requires no additional setup.</p>
+                        <p>Click "Authenticate with Raindrop" to get started.</p>
                     </div>
                 </div>
                 <div class="welcome-step">
                     <div class="step-number">2</div>
                     <div class="step-content">
-                        <h3>Choose What to Sync</h3>
-                        <p>In the <strong>Sync Settings</strong> tab, select your sync mode and choose which collections to import. We recommend starting with "One-way: Raindrop → Browser" mode.</p>
+                        <h3>Configure Sync</h3>
+                        <p>Go to the <strong>Sync Settings</strong> tab to choose your collections and sync mode.</p>
                     </div>
                 </div>
                 <div class="welcome-step">
                     <div class="step-number">3</div>
                     <div class="step-content">
-                        <h3>You're All Set!</h3>
-                        <p>Enable automatic sync and your bookmarks will stay in sync. Check the <strong>Guide</strong> tab for tips and best practices.</p>
+                        <h3>All Set!</h3>
+                        <p>Enable automatic sync and your bookmarks will always be up-to-date.</p>
                     </div>
                 </div>
             </div>
             <div class="welcome-actions">
                 <button id="welcomeSkip" class="button secondary">Skip Tour</button>
-                <button id="welcomeStart" class="button primary">Let's Get Started!</button>
+                <button id="welcomeStart" class="button primary">Let's Get Started</button>
             </div>
         </div>
     </div>
-
-        <div id="statusMessage" class="status hidden" style="position: sticky; top: 0; z-index: 5; margin: 0 0 10px 0;"></div>
-
-
-        <!-- Closeable Privacy Notice -->
-        <div id="privacyNotice" class="section" style="border: 1px solid #e8f4f8; background: #f8fcff; margin-bottom: 16px; display: block;">
-            <div style="display: flex; align-items: flex-start; justify-content: space-between;">
-                <div>
-                    <h3 style="margin: 0 0 8px 0; color: #0066cc;">🔒 Privacy & Security</h3>
-                    <div class="help-text" style="margin: 0;">
-                        <strong>No telemetry or tracking:</strong> This extension does not collect any usage data, analytics, or personal information.
-                        All data stays on your device and your chosen sync service (Raindrop.io).
-                        Authentication tokens are stored locally in Chrome's secure storage.
-                    </div>
-                </div>
-                <button id="closePrivacyNotice" type="button" style="background: none; border: none; font-size: 18px; color: #666; cursor: pointer; padding: 4px; margin-left: 12px;" title="Close privacy notice">×</button>
-            </div>
-        </div>
-
-        <div class="section tab-panel active" id="tab-api" data-tab="api">
-            <h2>Authentication</h2>
-
-            <div id="authMethodGroup" class="form-group">
-                <label for="authMethod">Authentication Method</label>
-                <select id="authMethod">
-                    <option value="managed" selected>Managed OAuth (Recommended)</option>
-                    <option value="manual">Manual Configuration</option>
-                </select>
-                <div class="help-text">Choose how to authenticate with Raindrop.io. Managed OAuth is safer and easier.</div>
-            </div>
-            <div id="authStatus" class="auth-status">
-                <div id="statusIndicator" class="status-indicator disconnected"></div>
-                <span id="authStatusText">Not authenticated</span>
-                <div id="statusDetails" class="status-details hidden"></div>
-                <div id="authProgress" class="progress-bar hidden">
-                    <div id="authProgressFill" class="progress-bar-fill"></div>
-                </div>
-            </div>
-            <div id="authButtons" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                <button id="authenticateBtn" class="button">Authenticate with Raindrop</button>
-                <button id="testConnection" class="button secondary">Test Connection</button>
-                <button id="logout" class="button danger hidden">Logout</button>
-            </div>
-
-            <div id="managedOAuthSection" style="margin-top: 16px; padding: 12px; border: 1px solid #e6e9ef; border-radius: 6px; background: #fafbfc;">
-                <div id="managedOAuthHeader" style="display: flex; align-items: center; justify-content: space-between;">
-                    <div id="managedOAuthTitle">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <h3 style="margin: 0 0 4px 0; font-size: 14px;">Managed OAuth Settings</h3>
-                            <div id="workerStatusContainer">
-                                <span id="workerStatus" class="help-text"></span>
-                            </div>
-                        </div>
-                        <span class="help-text" style="margin: 0;">Advanced configuration for managed authentication</span>
-                    </div>
-                    <button id="toggleManagedOAuth" type="button" style="background: none; border: 1px solid #007cba; color: #007cba; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">
-                        Show
-                    </button>
-                </div>
-
-                <div id="managedOAuthDetails" class="hidden" style="margin-top: 12px;">
-            <div class="form-group">
-              <label for="managedOAuthBaseUrl">Auth Server URL</label>
-              <input type="url" id="managedOAuthBaseUrl" placeholder="https://rdoauth.daiquiri.dev" class="pre-filled" disabled>
-              <div class="help-text">Using secure managed authentication server</div>
-                </div>
-            </div>
-            <div id="manualConfigSection" style="margin-top: 16px; padding: 12px; border: 1px solid #e6e9ef; border-radius: 6px; background: #fafbfc;">
-                <div id="manualConfigHeader" style="display: flex; align-items: center; justify-content: space-between;">
-                    <div id="manualConfigTitle">
-                        <h3 style="margin: 0 0 4px 0; font-size: 14px;">Manual Configuration</h3>
-                        <span class="help-text" style="margin: 0;">For advanced users or direct authentication setup</span>
-                    </div>
-                    <button id="toggleManualConfig" type="button" style="background: none; border: 1px solid #007cba; color: #007cba; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">
-                        Show
-                    </button>
-                </div>
-
-                <div id="manualConfigDetails" class="hidden" style="margin-top: 12px;">
-                <div id="clientIdGroup" class="form-group">
-                    <label for="clientId">Client ID</label>
-                    <div class="input-row">
-                        <input type="password" id="clientId" placeholder="Enter your Raindrop Client ID">
-                        <button id="toggleClientId" type="button" class="toggle-eye" aria-label="Show/Hide">Show</button>
-                    </div>
-                    <div class="help-text">Stored locally via Chrome storage. Hidden by default for privacy.</div>
-                </div>
-
-                <div id="clientSecretGroup" class="form-group">
-                    <label for="clientSecret">Client Secret</label>
-                    <div class="input-row">
-                        <input type="password" id="clientSecret" placeholder="Enter your Raindrop Client Secret">
-                        <button id="toggleClientSecret" type="button" class="toggle-eye" aria-label="Show/Hide">Show</button>
-                    </div>
-                    <div class="help-text">Do not share your client secret.</div>
-                </div>
-
-                <div id="redirectUriGroup" class="form-group">
-                    <label for="redirectUri">Redirect URI</label>
-                    <div class="input-row">
-                        <input type="url" id="redirectUri" class="pre-filled" placeholder="Extension identity redirect (auto)">
-                        <button id="redirectReset" type="button" class="toggle-eye" aria-label="Reset to default">Reset</button>
-                    </div>
-                    <div class="help-text">Default is the extension identity URL (auto). You can override this for beta testing; ensure it matches what you registered in Raindrop.</div>
-                    <div id="redirectHint" class="help-text" style="margin-top:6px;"></div>
-                </div>
-                <div id="saveConfigSection" style="margin-top: 16px;">
-                    <button id="saveConfig" class="button">Save Configuration</button>
-                </div>
-                </div>
-            </div>
-
-            <div id="debugSection" class="section" style="margin-top:16px;">
-                <h3>Debug</h3>
-                <div id="debugButtons" style="display:flex; gap:8px; flex-wrap:wrap;">
-                    <button id="viewAuthState" class="button secondary" type="button">View Auth State</button>
-                    <button id="runHealthCheck" class="button secondary" type="button">Run Health Check</button>
-                    <button id="clearTokens" class="button danger" type="button">Clear Tokens</button>
-                </div>
-                <pre id="authStateOut" style="background:#f8f9fa; border:1px solid #e6e9ef; padding:10px; border-radius:6px; margin-top:8px; max-height:220px; overflow:auto;"></pre>
-            </div>
-        </div>
-
-        <div class="section tab-panel" id="tab-sync" data-tab="sync">
-            <h2>Sync Settings</h2>
-
-            <!-- Raindrop Protection Notice -->
-            <div class="section" style="border: 1px solid #10b981; background: #ecfdf5; margin-bottom: 16px; padding: 12px; border-radius: 6px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="color: #047857; font-size: 16px;">🛡️</span>
-                    <div>
-                        <h3 style="margin: 0 0 4px 0; color: #047857; font-size: 14px;">Raindrop Protection Active</h3>
-                        <div class="help-text" style="margin: 0; color: #047857;">
-                            This extension never deletes bookmarks from Raindrop.io. Your Raindrop collection is always safe.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="checkbox-row">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="syncEnabled">
-                        <strong>Enable Raindrop Sync</strong>
-                    </label>
-                </div>
-                <div class="help-text">When disabled, automatic sync stops and manual sync is blocked.</div>
-            </div>
-
-            <div id="syncSettings" class="sync-settings-container">
-                <div class="sync-info" style="margin-bottom:12px;">
-                    <div id="autoSyncInfo">Automatic sync: Every 5 minutes</div>
-                    <div id="lastSyncTime">Last sync: Never</div>
-                </div>
-
-            <div class="sync-settings-grid">
-                <div class="form-group">
-                    <label for="syncInterval">Sync interval (minutes)</label>
-                    <input type="number" id="syncInterval" min="1" step="1" placeholder="5">
-                    <div class="help-text">Minimum 1 minute. Alarm is rescheduled automatically.</div>
-                </div>
-
-                <div class="form-group">
-                    <label for="rateLimitRpm">Max requests per minute</label>
-                    <input type="number" id="rateLimitRpm" min="1" step="1" placeholder="60">
-                    <div class="help-text">Used to pace API calls and avoid rate limit (429). Backoff applies automatically.</div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="syncModeSelect">Sync mode</label>
-                <select id="syncModeSelect">
-                    <option value="additions_only">Two-way: Additions only</option>
-                    <option value="mirror">Two-way: Mirror (add/update, no deletes)</option>
-                    <option value="upload_only">One-way: Browser → Raindrop (additions only)</option>
-                    <option value="off" selected>One-way: Raindrop → Browser (rebuild)</option>
-                </select>
-                <div class="help-text">Controls direction and level of reconciliation. Extension never deletes from Raindrop for safety.</div>
-            </div>
-
-            <div class="form-group collections-block">
-                <label>Collections to import</label>
-                <div class="help-text">Choose which Raindrop collections to import.</div>
-
-                <!-- Collection Import Mode Selection -->
-                <div style="margin: 12px 0;">
-                    <label for="collectionModeSelect" style="display: block; margin-bottom: 6px; font-weight: 600;">Import Mode:</label>
-                    <select id="collectionModeSelect" style="width: 100%; height: 35px; padding: 0 10px; border: 1px solid #d7dbe2; border-radius: 4px; font-size: 13px; margin-bottom: 8px;">
-                        <option value="topLevel" selected>Top-level only (Recommended - Safer and faster)</option>
-                        <option value="custom">Custom selection (Advanced - Choose specific collections)</option>
-                        <option value="all">All collections (Import everything including sub-collections)</option>
-                    </select>
-                    <div id="collectionModeDescription" class="help-text" style="margin-top: 4px;">Import only parent collections, excluding sub-collections. Safer and faster.</div>
-                </div>
-                <div class="refresh-section">
-                    <button id="refreshCollections" class="button secondary" type="button">Refresh Collections & Folders</button>
-                </div>
-                <!-- Custom Selection Controls (shown only when Custom mode is selected) -->
-                <div id="customCollectionControls" style="display: none;">
-                    <div class="collections-controls">
-                        <input type="text" id="collectionsSearch" placeholder="Search collections" disabled />
-                        <button id="selectAllCollections" class="button secondary small" type="button" disabled>Select all</button>
-                        <button id="clearCollections" class="button secondary small" type="button" disabled>Clear</button>
-                    </div>
-                    <div id="collectionsList" class="collections-list"></div>
-                </div>
-                <div class="help-text">Select specific collections to import. Only available when "Top-level only" is disabled.</div>
-            </div>
-
-            <div class="form-group">
-                <label for="targetFolderSelect">Target bookmarks folder</label>
-                <select id="targetFolderSelect"></select>
-                <div class="help-text">Items sync directly under the selected folder (default: Bookmarks Bar).</div>
-            </div>
-
-            <h2>Sorting Options</h2>
-
-            <div class="form-group">
-                <label for="collectionsSortSelect">Collections order</label>
-                <select id="collectionsSortSelect">
-                    <option value="alpha_asc">Alphabetical (A → Z)</option>
-                    <option value="alpha_desc">Alphabetical (Z → A)</option>
-                    <option value="raindrop">Raindrop order (if available)</option>
-                    <option value="none">Do not reorder</option>
-                </select>
-                <div class="help-text">Applies to collection folders at the target root.</div>
-            </div>
-
-            <div class="form-group">
-                <label for="bookmarksSortSelect">Bookmarks order</label>
-                <select id="bookmarksSortSelect">
-                    <option value="created_desc">Newest first</option>
-                    <option value="created_asc">Oldest first</option>
-                    <option value="alpha_asc">Alphabetical (A → Z)</option>
-                    <option value="alpha_desc">Alphabetical (Z → A)</option>
-                    <option value="domain_asc">Domain (A → Z)</option>
-                    <option value="none">Do not reorder</option>
-                </select>
-                <div class="help-text">Applies to bookmarks inside each collection folder.</div>
-            </div>
-
-            <div class="form-group" style="margin-top: 12px;">
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <button id="syncNow" class="button">Sync Now</button>
-                    <button id="retrySyncBtn" class="button warning" style="display: none;">🔄 Retry</button>
-                </div>
-                <div class="progress-container" id="syncProgress">
-                    <div class="progress-bar" id="syncProgressBar" style="width: 0%;">0%</div>
-                </div>
-                <div id="syncMetrics" style="margin-top: 8px; font-size: 12px; color: #666; display: none;">
-                    Last sync: <span id="lastSyncStats">--</span>
-                </div>
-            </div>
-            </div> <!-- end syncSettings container -->
-        </div>
-
-        <!-- AI Organizer Tab -->
-        <div class="section tab-panel" id="tab-ai" data-tab="ai">
-            <h2>🤖 AI Bookmark Organizer</h2>
-            <p class="help-text">Use AI to intelligently organize, clean, and categorize your bookmarks.</p>
-
-            <!-- AI Provider Configuration -->
-            <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                <h3>🔑 AI Provider Settings</h3>
-
-                <div class="form-group">
-                    <label for="aiProvider">AI Provider</label>
-                    <select id="aiProvider">
-                        <option value="">-- Select Provider --</option>
-                        <option value="claude">Claude (Anthropic)</option>
-                        <option value="openai">OpenAI (GPT-4)</option>
-                        <option value="gemini">Google Gemini</option>
-                    </select>
-                    <div class="help-text">
-                        Choose your preferred AI service. Each provider's API key is saved separately.
-                        <span id="savedProvidersHint" style="display: none; color: #28a745; font-weight: 600;"></span>
-                    </div>
-                </div>
-
-                <div id="aiProviderConfig" class="hidden">
-                    <div class="form-group">
-                        <label for="aiApiKey">API Key</label>
-                        <div style="display: flex; gap: 8px;">
-                            <input type="password" id="aiApiKey" placeholder="Enter your API key" style="flex: 1;">
-                            <button type="button" id="toggleApiKey" class="button secondary small">Show</button>
-                        </div>
-                        <div class="help-text" id="apiKeyHelp">
-                            Get your API key from: <a href="#" id="apiKeyLink" target="_blank" rel="noopener noreferrer">Provider website</a>
-                            <span id="apiKeyFormat" style="display: none; margin-left: 8px;">• Format: <code id="apiKeyFormatText"></code></span>
-                        </div>
-                    </div>
-
-                    <div class="form-group" id="aiModelGroup">
-                        <label for="aiModel">Model</label>
-                        <select id="aiModel">
-                            <option value="">-- Select Model --</option>
-                        </select>
-                        <div class="help-text">Choose the AI model to use for analysis.</div>
-                    </div>
-
-                    <div style="display: flex; gap: 8px;">
-                        <button type="button" id="saveAiConfig" class="button">Save Configuration</button>
-                        <button type="button" id="testAiConnection" class="button secondary">Test Connection</button>
-                    </div>
-
-                    <div id="aiConfigStatus" class="status hidden"></div>
-                </div>
-            </div>
-
-            <!-- AI Analysis Tools -->
-            <div id="aiToolsSection" class="hidden">
-                <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                    <h3>📊 Smart Analysis</h3>
-
-                    <div class="form-group">
-                        <label>Select Bookmark Source</label>
-                        <select id="aiAnalysisSource">
-                            <option value="all">All Bookmarks</option>
-                            <option value="folder">Specific Folder</option>
-                            <option value="unsorted">Unsorted Only</option>
-                        </select>
-                    </div>
-
-                    <div id="aiFolderSelect" class="form-group hidden">
-                        <label for="aiTargetFolder">Target Folder</label>
-                        <select id="aiTargetFolder"></select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Analysis Types</label>
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                <input type="checkbox" id="aiAnalyzeDomain" checked>
-                                <span>Domain Grouping - Group by website/domain</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                <input type="checkbox" id="aiAnalyzeTopic" checked>
-                                <span>Topic Categorization - Identify topics and categories</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                <input type="checkbox" id="aiAnalyzeSimilar" checked>
-                                <span>Similarity Detection - Find related bookmarks</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                <input type="checkbox" id="aiAnalyzeDuplicates" checked>
-                                <span>Duplicate Detection - Find exact and near duplicates</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                <input type="checkbox" id="aiAnalyzeBroken">
-                                <span>Broken Links - Check for dead/invalid URLs</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <button type="button" id="startAiAnalysis" class="button btn-lg" style="width: 100%; margin-top: 12px;">
-                        🔍 Analyze Bookmarks
-                    </button>
-                </div>
-
-                <!-- Results Section -->
-                <div id="aiResultsSection" class="hidden">
-                    <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                        <h3>📋 Analysis Results</h3>
-
-                        <div id="aiProgress" class="hidden" style="margin: 16px 0;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span id="aiProgressText">Analyzing...</span>
-                                <span id="aiProgressPercent">0%</span>
-                            </div>
-                            <div style="width: 100%; height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden;">
-                                <div id="aiProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.3s;"></div>
-                            </div>
-                        </div>
-
-                        <div id="aiResultsContent"></div>
-
-                        <div id="aiResultsActions" class="hidden" style="display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap;">
-                            <button type="button" id="applyAiSuggestions" class="button">Apply All Suggestions</button>
-                            <button type="button" id="exportAiResults" class="button secondary">Export Results</button>
-                            <button type="button" id="clearAiResults" class="button secondary small">Clear</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="section tab-panel" id="tab-tools" data-tab="tools">
-            <h2>🛠️ Tools</h2>
-            <p class="help-text">Import, export, backup, and cleanup utilities for managing your bookmarks.</p>
-
-            <!-- Import & Export Section -->
-            <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                <h3>📥 Import & Export</h3>
-
-                <div style="margin: 12px 0;">
-                    <h4 style="font-size: 14px; margin-bottom: 8px;">Export Bookmarks</h4>
-                    <button id="exportBookmarks" class="button secondary" type="button">Export All Bookmarks (JSON)</button>
-                    <div class="help-text" style="margin-top: 4px;">Downloads all your bookmarks as a JSON file for backup or transfer.</div>
-                </div>
-
-                <div style="margin: 12px 0;">
-                    <h4 style="font-size: 14px; margin-bottom: 8px;">Import Bookmarks</h4>
-                    <input type="file" id="importFile" accept=".json,.html,.htm" style="margin-bottom: 8px;" />
-                    <button id="importBookmarks" class="button secondary" type="button" disabled>Import Bookmarks</button>
-                    <div class="help-text" style="margin-top: 4px;">
-                        Supports JSON (Chrome/Brave exports) and HTML (standard browser exports)
-                    </div>
-                </div>
-
-                <div style="margin: 12px 0; padding: 12px; border: 1px solid #f59e0b; background: #fffbeb; border-radius: 6px;">
-                    <h4 style="font-size: 14px; margin-bottom: 8px; color: #92400e;">⚠️ Emergency Restore</h4>
-                    <button id="emergencyRestore" class="button danger" type="button">Emergency Restore (Clear All + Restore)</button>
-                    <div class="help-text" style="color: #92400e; margin-top: 4px;">
-                        <strong>Use only if bookmarks are corrupted:</strong> This will delete ALL current bookmarks and restore from a backup file.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Backup & Restore Section -->
-            <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                <h3>💾 Backup & Restore</h3>
-
-                <div style="margin: 12px 0;">
-                    <h4 style="font-size: 14px; margin-bottom: 8px;">📚 Backup Version History</h4>
-                    <div id="backupVersionHistory" style="padding: 12px; border: 1px solid #e9ecef; border-radius: 6px; background: #f8f9fa; max-height: 300px; overflow-y: auto;">
-                        <div class="help-text">Loading backup history...</div>
-                    </div>
-                    <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
-                        <button id="refreshBackupHistory" class="button secondary" type="button">🔄 Refresh</button>
-                        <button id="compareBackups" class="button secondary" type="button" style="display: none;">📊 Compare Selected</button>
-                        <button id="clearOldAutoBackups" class="button secondary" type="button">🗑️ Clear Old</button>
-                    </div>
-                </div>
-
-                <div style="margin: 12px 0;">
-                    <h4 style="font-size: 14px; margin-bottom: 8px;">Manual Backup & Restore</h4>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        <button id="createBackup" class="button primary" type="button">Create Backup</button>
-                        <button id="downloadBackupFile" class="button secondary" type="button">Download Backup</button>
-                        <button id="restoreFromBackup" class="button secondary" type="button">Restore from File</button>
-                    </div>
-                    <input type="file" id="restoreBackupFile" accept=".json" style="display: none;" />
-                    <div class="help-text" style="margin-top: 4px;">Create manual backup or restore from a previous backup file.</div>
-                </div>
-
-                <div style="margin: 12px 0; padding: 12px; border: 1px solid #10b981; background: #ecfdf5; border-radius: 6px;">
-                    <h4 style="font-size: 14px; margin-bottom: 8px; color: #047857;">Emergency Recovery</h4>
-                    <button id="restoreLastBackup" class="button" style="background: #28a745;" type="button">Restore Latest Auto Backup</button>
-                    <div class="help-text" style="color: #047857; margin-top: 4px;">Use this if sync operations go wrong and you need to quickly restore your bookmarks.</div>
-                </div>
-            </div>
-
-            <!-- Cleanup Section -->
-            <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px;">
-                <h3>🔍 Cleanup & Maintenance</h3>
-
-                <div id="duplicateStatus" style="padding: 12px; border: 1px solid #e9ecef; border-radius: 6px; background: #f8f9fa; margin: 12px 0;">
-                    <div id="duplicateStatusText">Click "Scan for Duplicates" to analyze your bookmarks</div>
-                </div>
-
-                <div style="display: grid; gap: 12px; grid-template-columns: 1fr 1fr; margin: 12px 0;">
-                    <div>
-                        <button id="scanDuplicates" class="button" style="background: #0066cc; width: 100%;" type="button">Scan for Duplicates</button>
-                        <div class="help-text" style="font-size: 11px; margin-top: 4px;">Find duplicate bookmarks and folders</div>
-                    </div>
-                    <div>
-                        <button id="cleanUrlParameters" class="button secondary" style="width: 100%;" type="button">Clean URL Parameters</button>
-                        <div class="help-text" style="font-size: 11px; margin-top: 4px;">Remove UTM, fbclid tracking parameters</div>
-                    </div>
-                </div>
-
-                <div style="margin: 12px 0;">
-                    <button id="cleanEmptyFolders" class="button secondary" style="width: 100%;" type="button">Clean Empty Folders</button>
-                    <div class="help-text" style="margin-top: 4px;">Remove empty bookmark folders to keep your organization clean.</div>
-                </div>
-
-                <div id="duplicatePreview" class="hidden" style="margin: 16px 0; padding: 12px; border: 1px solid #e6e9ef; border-radius: 6px; background: #f8f9fa;">
-                    <h4 style="color: #333; margin: 0 0 12px 0;">Duplicate Analysis Results</h4>
-                    <div id="duplicateResults"></div>
-                    <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
-                        <button id="autoCleanupSelected" class="button" type="button" style="background: var(--accent); color: white;">Auto Cleanup All</button>
-                        <button id="manualMergeSelected" class="button secondary" type="button">Manual Merge</button>
-                        <button id="cancelScan" class="button secondary" type="button">Cancel</button>
-                    </div>
-                </div>
-
-                <div style="margin: 16px 0;">
-                    <h4 style="font-size: 14px; margin-bottom: 8px;">Scan Options</h4>
-                    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <input type="checkbox" id="includeSubfolders" checked>
-                        <span>Include subfolders in scan</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <input type="checkbox" id="exactTitleMatch">
-                        <span>Require exact title match for bookmarks</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="createBackupBeforeRemoval" checked>
-                        <span>Automatically create backup before any changes</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Danger Zone Section -->
-            <div class="form-group" style="margin-top: 32px; padding: 20px; border: 2px solid #dc3545; border-radius: 8px; background: #fff5f5;">
-                <h3 style="color: #dc3545; margin: 0 0 12px 0;">⚠️ Danger Zone</h3>
-                <p style="color: #721c24; font-weight: 500; margin-bottom: 16px; font-size: 13px;">
-                    These operations are destructive and cannot be undone. Use with extreme caution!
-                </p>
-
-                <div style="margin-bottom: 16px;">
-                    <button id="clearAllBookmarksTools" class="button danger" type="button" style="width: 100%;">Clear ALL Bookmarks</button>
-                    <div class="help-text" style="color: #721c24; margin-top: 6px; font-weight: 500;">⚠️ WARNING: This will permanently delete ALL bookmarks in your browser! A backup is required before execution.</div>
-                </div>
-
-                <div id="clearConfirmationTools" class="confirmation-section" style="display: none; margin-top: 16px; padding: 16px; background: #fff; border: 1px solid #dc3545; border-radius: 6px;">
-                    <div id="clearSyncWarningTools" class="status info" style="display:none; margin-top:0; margin-bottom: 12px;">
-                        ⚠️ Raindrop Sync is currently enabled. After clearing, bookmarks may be restored from Raindrop automatically. Consider disabling "Enable Raindrop Sync" before proceeding.
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 600; color: #721c24; margin-bottom: 8px;">📥 Step 1: Download Backup</div>
-                        <button id="downloadBackupTools" class="button secondary" type="button" style="width: 100%;">Download Bookmarks Backup (JSON + HTML)</button>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-weight: 600; color: #721c24; margin-bottom: 8px;">⚠️ Step 2: Confirm Deletion</div>
-                        <div style="margin-bottom: 8px; color: #721c24; font-size: 13px;">Type <strong>"CLEAR ALL"</strong> to confirm:</div>
-                        <input type="text" id="clearConfirmTextTools" placeholder="Type CLEAR ALL here" style="width: 100%; padding: 10px; margin-bottom: 8px; box-sizing: border-box; border: 2px solid #ddd; border-radius: 4px; font-size: 14px;" />
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button id="executeClearTools" class="button danger" disabled style="flex: 1;">Execute Clear All</button>
-                        <button id="cancelClearTools" class="button secondary" style="flex: 1;">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="section tab-panel" id="tab-general" data-tab="general">
-            <h2>General Settings</h2>
-
-            <div class="form-group">
-                <h3>Interface Preferences</h3>
-                <div style="margin: 16px 0;">
-                    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <input type="radio" name="notificationStyle" id="modernNotification" value="modern" checked>
-                        <span><strong>Modern Notification Bar</strong> - Professional gradient design with glassmorphism effects</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="radio" name="notificationStyle" id="minimalNotification" value="minimal">
-                        <span><strong>Minimal Notification Bar</strong> - Simple yellow warning design</span>
-                    </label>
-                </div>
-                <div style="margin: 12px 0;">
-                    <button id="applyNotificationStyle" class="button secondary" type="button">Apply Style</button>
-                    <button id="previewNotificationStyle" class="button secondary" type="button">Preview</button>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <h3>Color Theme</h3>
-                <div style="margin: 12px 0; display: grid; gap: 8px; max-width: 380px;">
-                    <label for="themeSelect">Choose theme</label>
-                    <select id="themeSelect">
-                        <option value="slate">Slate (Default)</option>
-                        <option value="charcoal">Charcoal</option>
-                        <option value="ocean">Ocean</option>
-                    </select>
-                    <div id="themePreview" class="help-text" style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-top:6px;"></div>
-                </div>
-                <div style="margin: 12px 0; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-                    <button id="applyTheme" class="button secondary" type="button">Apply Theme</button>
-                    <label style="display:flex; align-items:center; gap:8px;">
-                        <input type="checkbox" id="darkModeToggle" />
-                        <span>Dark Mode</span>
-                    </label>
-
-                </div>
-            </div>
-
-            <div class="form-group">
-                <h3>🌙 Quiet Hours</h3>
-                <p class="help-text">Prevent automatic syncing during specified hours to save battery or avoid interruptions.</p>
-                <label style="display: flex; align-items: center; gap: 8px; margin: 12px 0;">
-                    <input type="checkbox" id="quietHoursEnabled" />
-                    <span>Enable Quiet Hours</span>
-                </label>
-                <div id="quietHoursSettings" style="display: none; margin-top: 12px; padding: 16px; background: #f8f9fa; border-radius: 6px;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;">
-                        <div>
-                            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Start Time</label>
-                            <input type="time" id="quietHoursStart" value="23:00" style="width: 100%;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 4px; font-weight: 500;">End Time</label>
-                            <input type="time" id="quietHoursEnd" value="07:00" style="width: 100%;">
-                        </div>
-                    </div>
-                    <p class="help-text" style="margin: 0;">Sync will pause during these hours. Manual sync is still available.</p>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <h3>⚡ Conditional Sync</h3>
-                <p class="help-text">Automatically pause sync based on system conditions.</p>
-                <label style="display: flex; align-items: center; gap: 8px; margin: 8px 0;">
-                    <input type="checkbox" id="pauseOnLowBattery" />
-                    <span>Pause on low battery (&lt;20%)</span>
-                </label>
-                <label style="display: flex; align-items: center; gap: 8px; margin: 8px 0;">
-                    <input type="checkbox" id="pauseOnMetered" />
-                    <span>Pause on metered network (mobile data)</span>
-                </label>
-            </div>
-
-            <div class="form-group">
-                <h3>⚙️ Settings Management</h3>
-                <p class="help-text">Export your settings for backup or import settings from another device.</p>
-                <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
-                    <button id="exportSettings" class="button secondary" type="button">📤 Export Settings</button>
-                    <button id="importSettings" class="button secondary" type="button">📥 Import Settings</button>
-                    <input type="file" id="importSettingsFile" accept=".json" style="display: none;" />
-                </div>
-            </div>
-
-            <div class="form-group">
-                <h3>Reset Settings</h3>
-                <p class="help-text">Restore all settings to their recommended default values. This will not affect your bookmarks or Raindrop connection.</p>
-                <button id="resetToDefaults" class="button secondary" type="button" style="margin-top: 12px;">Reset to Defaults</button>
-            </div>
-        </div>
-
-        <div class="section tab-panel" id="tab-help" data-tab="help">
-            <h2>❓ Help & Support</h2>
-            <p class="help-text">Setup guides, tips, and support resources for using Open Bookmark Sync.</p>
-
-            <!-- Quick Setup Guide -->
-            <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                <h3>🚀 Quick Setup Guide</h3>
-                <ol style="margin: 16px 0; padding-left: 20px; line-height: 1.8;">
-                    <li><strong>Connect:</strong> Go to Connect tab and choose "Managed OAuth" (recommended) or "Manual Configuration"</li>
-                    <li><strong>Authenticate:</strong> Click "Authenticate with Raindrop" - no additional setup needed for Managed OAuth</li>
-                    <li><strong>Configure Sync:</strong> In Sync Settings, choose your sync mode and interval</li>
-                    <li><strong>Select Target:</strong> Choose which browser bookmarks folder to sync to</li>
-                    <li><strong>Choose Collections:</strong> Select which Raindrop collections to sync</li>
-                    <li><strong>Enable:</strong> Check "Enable Raindrop Sync" to start automatic synchronization</li>
-                </ol>
-            </div>
-
-            <!-- Tips & Best Practices -->
-            <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                <h3>💡 Tips & Best Practices</h3>
-                <ul style="margin: 16px 0; padding-left: 20px; line-height: 1.6;">
-                    <li><strong>Authentication:</strong> Use "Managed OAuth" for easier setup - no need to create Raindrop app</li>
-                    <li><strong>Safety First:</strong> Start with "One-way: Raindrop → Browser" sync mode (default)</li>
-                    <li><strong>Collections:</strong> Use "Top-level only" collections setting initially</li>
-                    <li><strong>Testing:</strong> Test with a longer sync interval (15-30 minutes) at first</li>
-                    <li><strong>Backup:</strong> Export your bookmarks before making major changes</li>
-                    <li><strong>Verification:</strong> Use the "Test Connection" button to verify your setup</li>
-                </ul>
-            </div>
-
-            <!-- Sync Modes Explained -->
-            <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                <h3>⚙️ Sync Modes Explained</h3>
-                <div style="margin: 16px 0;">
-                    <div style="margin-bottom: 12px; padding: 10px; background: #f8f9fa; border-radius: 6px;">
-                        <strong>One-way: Raindrop → Browser (Default)</strong><br>
-                        <span style="font-size: 12px; color: #6c757d;">Safest option. Downloads Raindrop bookmarks to browser only. Perfect for first-time users.</span>
-                    </div>
-                    <div style="margin-bottom: 12px; padding: 10px; background: #f8f9fa; border-radius: 6px;">
-                        <strong>Two-way: Additions only</strong><br>
-                        <span style="font-size: 12px; color: #6c757d;">Safe bi-directional sync. Only adds new bookmarks, never deletes anything.</span>
-                    </div>
-                    <div style="margin-bottom: 12px; padding: 10px; background: #f8f9fa; border-radius: 6px;">
-                        <strong>Two-way: Mirror</strong><br>
-                        <span style="font-size: 12px; color: #6c757d;">Bi-directional sync with additions and updates. Never deletes from Raindrop for safety.</span>
-                    </div>
-                    <div style="padding: 10px; background: #f8f9fa; border-radius: 6px;">
-                        <strong>One-way: Browser → Raindrop</strong><br>
-                        <span style="font-size: 12px; color: #6c757d;">Uploads browser bookmarks to Raindrop only. Good for backing up browser bookmarks.</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Support Resources -->
-            <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 20px;">
-                <h3 style="margin: 0 0 16px 0;">Support Resources</h3>
-
-                <!-- Quick Actions -->
-                <button id="copyDiagnostics" class="button neutral" style="width: 100%; margin-bottom: 16px; justify-content: center;">
-                    📋 Copy Diagnostics for Issue Report
-                </button>
-
-                <!-- Links Grid (2 columns) -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-                    <a id="supportPanelSite" class="header-link" href="#" target="_blank" rel="noopener noreferrer" style="padding: 10px 12px;">
-                        <img src="icons/home.svg" alt="" class="icon" style="width: 16px; height: 16px;">
-                        <span>Website</span>
-                    </a>
-                    <a class="header-link" href="https://github.com/spacechild-dev/open-bookmark-sync" target="_blank" rel="noopener noreferrer" style="padding: 10px 12px;">
-                        <img src="icons/github.svg" alt="" class="icon" style="width: 16px; height: 16px;">
-                        <span>GitHub</span>
-                    </a>
-                    <a class="header-link" href="https://github.com/spacechild-dev/open-bookmark-sync/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer" style="padding: 10px 12px;">
-                        <img src="icons/lock.svg" alt="" class="icon" style="width: 16px; height: 16px;">
-                        <span>Privacy</span>
-                    </a>
-                    <a class="header-link" href="https://github.com/spacechild-dev/open-bookmark-sync/blob/main/ROADMAP.md" target="_blank" rel="noopener noreferrer" style="padding: 10px 12px;">
-                        <img src="icons/layers.svg" alt="" class="icon" style="width: 16px; height: 16px;">
-                        <span>Roadmap</span>
-                    </a>
-                </div>
-
-                <!-- Report Issue (Full width) -->
-                <a href="mailto:dagkan@spacechild.dev?subject=Raindrop%20Browser%20Sync%20-%20Issue%20Report&body=Hi%2C%0A%0AI%20found%20an%20issue%20with%20the%20Raindrop%20Browser%20Sync%20extension%3A%0A%0A%5BPlease%20describe%20the%20issue%20here%5D%0A%0AThanks%21" class="header-link" style="padding: 10px 12px; margin-bottom: 20px; display: flex;">
-                    <img src="icons/mail.svg" alt="" class="icon" style="width: 16px; height: 16px;">
-                    <span>📧 Report an Issue</span>
-                </a>
-
-                <!-- Support Section -->
-                <div style="padding-top: 20px; border-top: 1px solid #e9ecef;">
-                    <h4 style="margin: 0 0 12px 0;">💝 Support the Project</h4>
-                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
-                        <!-- GitHub Sponsor iframe removed for Chrome Web Store compliance -->
-                        <a href="https://github.com/sponsors/spacechild-dev" target="_blank" rel="noopener noreferrer" style="background: #24292e; color: #fff; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-                            <img src="icons/github.svg" alt="" style="width: 16px; height: 16px;">
-                            <span>Sponsor on GitHub</span>
-                        </a>
-                        <a href="https://buymeacoffee.com/daiquiri" target="_blank" rel="noopener noreferrer" style="background: #FFDD00; color: #000; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-                            <img src="icons/coffee.svg" alt="" style="width: 16px; height: 16px;">
-                            <span>Buy me a coffee</span>
-                        </a>
-                    </div>
-                    <p class="help-text" style="margin: 0; font-size: 12px;">Your support helps keep this extension free and improving!</p>
-                </div>
-            </div>
-
-            <!-- Sync History Timeline -->
-            <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-top: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h3 style="margin: 0;">📅 Sync History Timeline</h3>
-                    <button id="exportSyncHistory" class="button" style="height: 28px; padding: 0 10px; font-size: 11px;">📥 Export</button>
-                </div>
-                <div id="syncHistoryTimeline" style="max-height: 250px; overflow-y: auto; font-size: 12px; background: #f8f9fa; padding: 12px; border-radius: 4px;">
-                    <div style="color: #999;">No sync history yet...</div>
-                </div>
-            </div>
-
-            <!-- Activity Log -->
-            <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-top: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h3 style="margin: 0;">Activity Log</h3>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="activityLogSearch" placeholder="Search..." style="width: 150px; height: 28px; padding: 0 8px; font-size: 11px; border: 1px solid #e9ecef; border-radius: 4px;">
-                        <button id="clearActivityLog" class="button" style="height: 28px; padding: 0 10px; font-size: 11px;">Clear</button>
-                    </div>
-                </div>
-                <div id="activityLogContainer" style="max-height: 200px; overflow-y: auto; font-size: 12px; font-family: monospace; background: #f8f9fa; padding: 8px; border-radius: 4px;">
-                    <div style="color: #999;">No activity yet...</div>
-                </div>
-            </div>
-        </div>
-
-        </div> <!-- end tab-content -->
-        
-        <!-- Inline confirmation modal -->
-        <div id="confirmationModal" class="inline-modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle" aria-describedby="confirmationMessage">
-            <div class="inline-modal-backdrop" data-close="true"></div>
-            <div class="inline-modal-dialog">
-                <div class="inline-modal-header">
-                    <h3 id="confirmationTitle">Confirm</h3>
-                    <button id="confirmationClose" class="button-icon" type="button" aria-label="Close">&times;</button>
-                </div>
-                <div id="confirmationMessage" class="inline-modal-body"></div>
-                <div class="inline-modal-actions">
-                    <button id="confirmationCancel" class="button secondary" type="button">Cancel</button>
-                    <button id="confirmationConfirm" class="button danger" type="button">Confirm</button>
-                </div>
-            </div>
-        </div>
-
-            </div> <!-- end main-content -->
-        </div> <!-- end main -->
-    </div>
-
-    <!-- Welcome Screen Modal -->
-    <div id="welcomeOverlay" class="welcome-overlay">
-        <div class="welcome-modal">
-            <div class="welcome-header">
-                <h1>🎉 Welcome to Open Bookmark Sync!</h1>
-                <p>Let's get you set up in just 3 easy steps</p>
-            </div>
-            <div class="welcome-content">
-                <div class="welcome-step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3>Connect to Raindrop.io</h3>
-                        <p>Go to the <strong>Connect</strong> tab and click "Authenticate with Raindrop". Using Managed OAuth (recommended) requires no additional setup.</p>
-                    </div>
-                </div>
-                <div class="welcome-step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3>Choose What to Sync</h3>
-                        <p>In the <strong>Sync Settings</strong> tab, select your sync mode and choose which collections to import. We recommend starting with "One-way: Raindrop → Browser" mode.</p>
-                    </div>
-                </div>
-                <div class="welcome-step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3>You're All Set!</h3>
-                        <p>Enable automatic sync and your bookmarks will stay in sync. Check the <strong>Guide</strong> tab for tips and best practices.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="welcome-actions">
-                <button id="welcomeSkip" class="welcome-btn secondary">Skip Tour</button>
-                <button id="welcomeStart" class="welcome-btn primary">Let's Get Started!</button>
-            </div>
-        </div>
-    </div>
-
-            </div>
-        </main>
-    </div>
-
+    
     <script src="oauth.js"></script>
     <script src="ai-manager.js"></script>
     <script src="options.js"></script>
