@@ -39,7 +39,7 @@ UI Improvements
 INSTALLATION
 
 From Source:
-git clone https://github.com/daiquiri-98/open-bookmark-sync.git
+git clone https://github.com/spacechild-dev/open-bookmark-sync.git
 cd open-bookmark-sync
 # Load extension/ folder in chrome://extensions (Developer mode)
 
@@ -77,7 +77,7 @@ SUPPORT
 If this extension helps you, consider:
 - Star the repository
 - Buy me a coffee: https://buymeacoffee.com/daiquiri
-- Sponsor on GitHub: https://github.com/sponsors/daiquiri-98
+- Sponsor on GitHub: https://github.com/sponsors/spacechild-dev
 
 ASSETS
 
@@ -89,4 +89,4 @@ LINKS
 - Changelog: CHANGELOG.md
 - Roadmap: ROADMAP.md
 - Privacy Policy: PRIVACY.md
-- GitHub Repository: https://github.com/daiquiri-98/open-bookmark-sync
+- GitHub Repository: https://github.com/spacechild-dev/open-bookmark-sync

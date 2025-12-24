@@ -1,21 +1,19 @@
 # Open Bookmark Sync
 
-![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.3.1-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Compliant-brightgreen.svg)
 
 > Synchronize your Raindrop.io collections with Chrome/Brave bookmarks. Features one‑way import, two‑way sync, automatic backups, and smart cleanup tools.
 
-**Links**: [Privacy Policy](PRIVACY.md) | [Roadmap](ROADMAP.md) | [Changelog](CHANGELOG.md) | [Support](https://buymeacoffee.com/daiquiri) | [Issues](https://github.com/daiquiri-98/open-bookmark-sync/issues)
+**Links**: [Privacy Policy](PRIVACY.md) | [Roadmap](ROADMAP.md) | [Changelog](CHANGELOG.md) | [Support](https://buymeacoffee.com/daiquiri) | [Issues](https://github.com/spacechild-dev/open-bookmark-sync/issues)
 
-## What's New in v1.3.0
+## What's New in v1.3.1
 
-- **Chrome Web Store Compliant**: Removed all remote code dependencies
-- **HTML Backup Export**: Automatic JSON + HTML backup downloads (Netscape format)
-- **Bug Fixes**: Fixed emergency restore, empty bookmark titles preservation
-- **UI Improvements**: Reorganized sidebar with "Raindrop.io Sync" category
-- **Tools Enhancement**: New Danger Zone section for advanced operations
-- **Streamlined**: Reduced from 6 to 5 tabs, cleaner navigation
+- **Chrome Web Store Compliance**: Fixed remote code violations
+- **Removed external iframes**: GitHub sponsor button now a direct link
+- **AI features temporarily disabled**: Code preserved but UI hidden for compliance
+- **Fully self-contained**: No external script dependencies
 
 [View full changelog →](CHANGELOG.md)
 
@@ -28,7 +26,7 @@
 - **Secure OAuth2**: Chrome identity API with automatic token refresh
 - **Backup & Restore**: Automatic backups with JSON + HTML export
 - **Cleanup Tools**: URL parameter cleaning, duplicate detection, empty folder removal
-- **Modern UI**: Clean, responsive interface with 5 organized tabs
+- **Modern UI**: Clean, responsive interface with organized tabs
 - **Performance**: Rate-limit aware with exponential backoff
 
 ## Installation

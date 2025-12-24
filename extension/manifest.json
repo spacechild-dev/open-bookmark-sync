@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Open Bookmark Sync",
-  "version": "1.3.0",
+  "version": "1.3.2",
   "description": "Synchronizes Raindrop.io collections with Brave/Chrome bookmarks bar",
 
   "permissions": [
@@ -15,7 +15,7 @@
     "https://api.raindrop.io/*",
     "https://raindrop.io/*",
     "https://*.workers.dev/*",
-    "https://*.daiquiri.dev/*"
+    "https://*.spacechild.dev/*"
   ],
 
   "background": {
@@ -39,6 +39,6 @@
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
 
-  "homepage_url": "https://github.com/daiquiri-98/open-bookmark-sync",
-  "privacy_policy": "https://github.com/daiquiri-98/open-bookmark-sync/blob/main/PRIVACY.md"
+  "homepage_url": "https://github.com/spacechild-dev/open-bookmark-sync",
+  "privacy_policy": "https://github.com/spacechild-dev/open-bookmark-sync/blob/main/PRIVACY.md"
 }

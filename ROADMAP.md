@@ -1,7 +1,7 @@
 # Open Bookmark Sync - Product Roadmap
 
-**Last Updated**: 2025-01-09
-**Current Version**: v1.3.0
+**Last Updated**: 2025-10-01
+**Current Version**: v1.3.1
 **Status**: Active Development
 
 ---
@@ -240,7 +240,7 @@
 - [ ] Progressive Web App (PWA) version
 
 #### 7.2 Advanced Organization
-- [ ] AI-powered bookmark categorization
+- [ ] ⏸️ AI-powered bookmark categorization (temporarily disabled for CWS compliance)
 - [ ] Automatic tagging based on content
 - [ ] Smart duplicate detection (similar content, not just URLs)
 - [ ] Bookmark search with full-text indexing

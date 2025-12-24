@@ -7,7 +7,7 @@ class RaindropOAuth {
     this.API_BASE = 'https://api.raindrop.io/rest/v1';
     this.DEFAULT_MANAGED_BASE = 'https://rdoauth.daiquiri.dev';
     this.MANAGED_ENABLED = true;
-    this.MANAGED_OAUTH_ENABLED = true; // Add missing constant
+    this.MANAGED_OAUTH_ENABLED = true;
   }
 
   async startAuthFlow() {

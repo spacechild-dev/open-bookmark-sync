@@ -155,7 +155,7 @@ class PopupUI {
       if (a1) a1.href = bmc || fallbackBmc;
       // Website
       const site = await this.readFirstNonEmptyUrl(['website.txt']);
-      const fallbackSite = 'https://daiquiri.dev';
+      const fallbackSite = 'https://spacechild.dev';
       const s1 = this.$('siteLink');
       if (s1) s1.href = site || fallbackSite;
     } catch (e) {

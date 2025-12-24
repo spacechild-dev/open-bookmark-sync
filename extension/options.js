@@ -15,8 +15,12 @@ class OptionsManager {
     this.loadSupportLinks();
     this.refreshLocalBackups(); // Load local backup list on startup
     this.refreshAutoBackups(); // Load auto backups on startup
-    const initialTab = document.querySelector('.tab-btn.active')?.dataset.tab || 'api';
+    
+    // Restore last active tab or default to 'api'
+    const lastTab = localStorage.getItem('lastActiveTab');
+    const initialTab = lastTab || document.querySelector('.tab-btn.active')?.dataset.tab || 'api';
     this.showTab(initialTab);
+    
     this.startTokenHealthCheck();
     this.initSidebarCollapse(); // Initialize collapsible sidebar sections
 
@@ -411,7 +415,9 @@ class OptionsManager {
       }
 
       if (E.managedOAuthBaseUrl) {
-        const defaultBase = 'https://rdoauth.daiquiri.dev';
+
+  // Default values
+  const defaultBase = 'https://rdoauth.daiquiri.dev';
         E.managedOAuthBaseUrl.value = config.managedOAuthBaseUrl || defaultBase;
         // Lock by default; can unlock via Edit button
         E.managedOAuthBaseUrl.disabled = true;
@@ -886,7 +892,9 @@ class OptionsManager {
       if (aPanelBmc) aPanelBmc.href = bmc || fallbackBmc;
 
       const site = await this.readFirstNonEmptyUrl(['website.txt']);
-      const fallbackSite = 'https://daiquiri.dev';
+
+  // Constants
+  const fallbackSite = 'https://spacechild.dev';
       const aTopSite = document.getElementById('siteLink');
       const aPanelSite = document.getElementById('supportPanelSite');
       if (aTopSite) aTopSite.href = site || fallbackSite;
@@ -923,7 +931,7 @@ class OptionsManager {
       const a = document.getElementById('openRoadmapRepo');
       if (!a) return;
       // If the repo URL is known, set it; else hide link
-      const repoUrl = 'https://github.com/daiquiri-98/open-bookmark-sync';
+      const repoUrl = 'https://github.com/spacechild-dev/open-bookmark-sync';
       a.href = repoUrl ? (repoUrl + '/blob/main/ROADMAP.md') : '#';
       if (!repoUrl) a.style.display = 'none';
     } catch (_) {}
@@ -949,9 +957,34 @@ class OptionsManager {
   normalizeUrl(s) { try { return /^https?:\/\//i.test(s) ? s : ('https://' + s); } catch (_) { return ''; } }
 
   showTab(key) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === key));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', (p.dataset.tab === key)));
-    document.querySelectorAll('.side-link').forEach(b => b.classList.toggle('active', b.dataset.tab === key));
+    if (!key) return;
+    console.log('Navigation: Switching to tab', key);
+
+    // Update tab buttons (top nav if exists)
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      if (b.dataset.tab === key) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+
+    // Update panels visibility
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      if (p.dataset.tab === key) {
+        p.classList.add('active');
+        p.style.display = 'block'; // Ensure visibility
+      } else {
+        p.classList.remove('active');
+        p.style.display = 'none';
+      }
+    });
+
+    // Update sidebar links
+    document.querySelectorAll('.side-link').forEach(b => {
+      if (b.dataset.tab === key) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+
+    // Save state
+    localStorage.setItem('lastActiveTab', key);
   }
 
   applyLayout(mode) {
@@ -3598,7 +3631,8 @@ class OptionsManager {
       return;
     }
 
-    for (const node of nodes) {
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
       try {
         if (!node) {
           continue; // Skip null/undefined nodes
@@ -3615,19 +3649,38 @@ class OptionsManager {
           // Use title/name if exists, otherwise empty string (NOT url)
           const bookmarkTitle = node.title !== undefined ? node.title : (node.name !== undefined ? node.name : '');
 
-          await chrome.bookmarks.create({
+          // Preserve original index/order
+          const createOptions = {
             parentId: parentId,
             title: bookmarkTitle,
             url: node.url
-          });
+          };
+
+          // Use stored index if available, otherwise use loop index
+          if (node.index !== undefined) {
+            createOptions.index = node.index;
+          } else {
+            createOptions.index = i;
+          }
+
+          await chrome.bookmarks.create(createOptions);
         } else if (node.children && Array.isArray(node.children)) {
           // It's a folder
           const folderTitle = node.title !== undefined ? node.title : (node.name !== undefined ? node.name : 'Imported Folder');
 
-          const folder = await chrome.bookmarks.create({
+          const createOptions = {
             parentId: parentId,
             title: folderTitle
-          });
+          };
+
+          // Preserve folder index
+          if (node.index !== undefined) {
+            createOptions.index = node.index;
+          } else {
+            createOptions.index = i;
+          }
+
+          const folder = await chrome.bookmarks.create(createOptions);
           await this.createBookmarksFromTree(node.children, folder.id);
         }
       } catch (error) {
@@ -5874,8 +5927,10 @@ class OptionsManager {
         twoWayMode: 'additions_only',
         targetFolderId: '1',
         useSubfolder: false,
-        managedOAuth: true,
-        managedOAuthBaseUrl: 'https://rdoauth.daiquiri.dev',
+      // OAuth
+      managedOAuth: true,
+      managedOAuthBaseUrl: 'https://rdoauth.daiquiri.dev',
+      clientId: '',
         collectionMode: 'parentOnly',
         collectionsSort: 'alpha_asc',
         bookmarksSort: 'created_desc',
@@ -5971,6 +6026,592 @@ class OptionsManager {
     } else {
       this.showMessage(`${icon} ${operationName}: ${success} succeeded, ${failed} failed`, status);
     }
+  }
+}
+
+// === AI User Interface ===
+class AIUserInterface {
+  constructor() {
+    this.aiManager = new AIManager();
+    this.currentResults = null;
+    this.init();
+  }
+
+  async init() {
+    // Initialize AI manager
+    await this.aiManager.initialize();
+
+    // Setup event listeners
+    this.setupProviderSelection();
+    this.setupConfigSave();
+    this.setupConnectionTest();
+    this.setupAnalysis();
+    this.setupResultsActions();
+
+    // Load saved config if exists
+    await this.loadSavedConfig();
+  }
+
+  setupProviderSelection() {
+    const providerSelect = document.getElementById('aiProvider');
+    const configSection = document.getElementById('aiProviderConfig');
+    const toolsSection = document.getElementById('aiToolsSection');
+    const apiKeyLink = document.getElementById('apiKeyLink');
+    const modelSelect = document.getElementById('aiModel');
+
+    if (!providerSelect) return;
+
+    providerSelect.addEventListener('change', async (e) => {
+      const provider = e.target.value;
+
+      if (!provider) {
+        configSection.classList.add('hidden');
+        toolsSection.classList.add('hidden');
+        return;
+      }
+
+      configSection.classList.remove('hidden');
+
+      // Update provider info
+      const info = AIManager.getProviderInfo(provider);
+      if (info) {
+        apiKeyLink.href = info.website;
+        apiKeyLink.textContent = info.name;
+
+        // Show API key format hint
+        const formatSpan = document.getElementById('apiKeyFormat');
+        const formatText = document.getElementById('apiKeyFormatText');
+        if (formatSpan && formatText && info.keyFormat) {
+          formatText.textContent = info.keyFormat;
+          formatSpan.style.display = 'inline';
+        }
+
+        // Populate models
+        modelSelect.innerHTML = '<option value="">-- Select Model --</option>';
+        info.models.forEach(model => {
+          const option = document.createElement('option');
+          option.value = model.value;
+          option.textContent = model.label;
+          modelSelect.appendChild(option);
+        });
+      }
+
+      // Load saved config for this provider
+      const { config } = await this.aiManager.getConfig(provider);
+      if (config) {
+        // Fill in saved API key and model
+        const apiKeyInput = document.getElementById('aiApiKey');
+        if (apiKeyInput && config.apiKey) {
+          apiKeyInput.value = config.apiKey;
+        }
+
+        // Set model after a small delay to ensure options are populated
+        setTimeout(() => {
+          if (modelSelect && config.model) {
+            modelSelect.value = config.model;
+          }
+        }, 50);
+
+        // Show tools section if config exists
+        document.getElementById('aiToolsSection').classList.remove('hidden');
+      } else {
+        // Clear fields if no saved config
+        const apiKeyInput = document.getElementById('aiApiKey');
+        if (apiKeyInput) {
+          apiKeyInput.value = '';
+        }
+        document.getElementById('aiToolsSection').classList.add('hidden');
+      }
+    });
+
+    // Toggle API key visibility
+    const toggleBtn = document.getElementById('toggleApiKey');
+    const apiKeyInput = document.getElementById('aiApiKey');
+
+    if (toggleBtn && apiKeyInput) {
+      toggleBtn.addEventListener('click', () => {
+        const isPassword = apiKeyInput.type === 'password';
+        apiKeyInput.type = isPassword ? 'text' : 'password';
+        toggleBtn.textContent = isPassword ? 'Hide' : 'Show';
+      });
+    }
+  }
+
+  setupConfigSave() {
+    const saveBtn = document.getElementById('saveAiConfig');
+    if (!saveBtn) return;
+
+    saveBtn.addEventListener('click', async () => {
+      const provider = document.getElementById('aiProvider').value;
+      const apiKey = document.getElementById('aiApiKey').value;
+      const model = document.getElementById('aiModel').value;
+
+      if (!provider || !apiKey || !model) {
+        this.showStatus('Please fill in all fields', 'error');
+        return;
+      }
+
+      // Validate API key format
+      const validation = AIManager.validateApiKey(provider, apiKey);
+      if (!validation.valid) {
+        this.showStatus(`Invalid API key: ${validation.error}`, 'error');
+        return;
+      }
+
+      try {
+        await this.aiManager.saveConfig(provider, apiKey, model);
+        this.showStatus('Configuration saved successfully!', 'success');
+        document.getElementById('aiToolsSection').classList.remove('hidden');
+
+        // Update saved providers hint
+        const allConfigs = await this.aiManager.getAllConfigs();
+        const savedProviders = Object.keys(allConfigs);
+        const hint = document.getElementById('savedProvidersHint');
+        if (hint && savedProviders.length > 0) {
+          const providerNames = savedProviders.map(p => {
+            const info = AIManager.getProviderInfo(p);
+            return info ? info.name.split(' ')[0] : p;
+          }).join(', ');
+          hint.textContent = `✓ Saved: ${providerNames}`;
+          hint.style.display = 'inline';
+        }
+      } catch (error) {
+        this.showStatus(`Failed to save: ${error.message}`, 'error');
+      }
+    });
+  }
+
+  setupConnectionTest() {
+    const testBtn = document.getElementById('testAiConnection');
+    if (!testBtn) return;
+
+    testBtn.addEventListener('click', async () => {
+      const provider = document.getElementById('aiProvider').value;
+      const apiKey = document.getElementById('aiApiKey').value;
+      const model = document.getElementById('aiModel').value;
+
+      if (!provider || !apiKey || !model) {
+        this.showStatus('Please configure all settings first', 'error');
+        return;
+      }
+
+      // Validate API key format
+      const validation = AIManager.validateApiKey(provider, apiKey);
+      if (!validation.valid) {
+        this.showStatus(`Invalid API key: ${validation.error}`, 'error');
+        return;
+      }
+
+      testBtn.disabled = true;
+      testBtn.textContent = 'Testing...';
+
+      try {
+        // Temporarily save config for testing
+        await this.aiManager.saveConfig(provider, apiKey, model);
+        const result = await this.aiManager.testConnection();
+        this.showStatus(`✓ Connection successful! Model: ${result.model}`, 'success');
+        document.getElementById('aiToolsSection').classList.remove('hidden');
+      } catch (error) {
+        this.showStatus(`✗ Connection failed: ${error.message}`, 'error');
+      } finally {
+        testBtn.disabled = false;
+        testBtn.textContent = 'Test Connection';
+      }
+    });
+  }
+
+  setupAnalysis() {
+    const startBtn = document.getElementById('startAiAnalysis');
+    const sourceSelect = document.getElementById('aiAnalysisSource');
+    const folderSelect = document.getElementById('aiFolderSelect');
+
+    if (!startBtn) return;
+
+    // Show/hide folder select based on source
+    if (sourceSelect) {
+      sourceSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'folder') {
+          folderSelect.classList.remove('hidden');
+          this.populateFolderSelect();
+        } else {
+          folderSelect.classList.add('hidden');
+        }
+      });
+    }
+
+    startBtn.addEventListener('click', async () => {
+      await this.runAnalysis();
+    });
+  }
+
+  async populateFolderSelect() {
+    const select = document.getElementById('aiTargetFolder');
+    if (!select) return;
+
+    const tree = await chrome.bookmarks.getTree();
+    select.innerHTML = '';
+
+    const addFolder = (node, depth = 0) => {
+      if (node.children) {
+        if (node.id !== '0') {
+          const option = document.createElement('option');
+          option.value = node.id;
+          option.textContent = '  '.repeat(depth) + (node.title || 'Bookmarks');
+          select.appendChild(option);
+        }
+        node.children.forEach(child => addFolder(child, depth + 1));
+      }
+    };
+
+    tree.forEach(node => addFolder(node));
+  }
+
+  async runAnalysis() {
+    const startBtn = document.getElementById('startAiAnalysis');
+    const progressSection = document.getElementById('aiProgress');
+    const resultsSection = document.getElementById('aiResultsSection');
+    const resultsContent = document.getElementById('aiResultsContent');
+
+    startBtn.disabled = true;
+    startBtn.textContent = 'Analyzing...';
+    progressSection.classList.remove('hidden');
+    resultsSection.classList.remove('hidden');
+
+    try {
+      // Get bookmarks to analyze
+      const bookmarks = await this.getBookmarksForAnalysis();
+
+      if (bookmarks.length === 0) {
+        this.showStatus('No bookmarks found to analyze', 'error');
+        return;
+      }
+
+      this.updateProgress('Analyzing bookmarks...', 10);
+
+      // Get analysis options
+      const options = {
+        analyzeDomain: document.getElementById('aiAnalyzeDomain').checked,
+        analyzeTopic: document.getElementById('aiAnalyzeTopic').checked,
+        analyzeSimilar: document.getElementById('aiAnalyzeSimilar').checked,
+        analyzeDuplicates: document.getElementById('aiAnalyzeDuplicates').checked,
+        analyzeBroken: document.getElementById('aiAnalyzeBroken').checked
+      };
+
+      this.updateProgress('Processing with AI...', 30);
+
+      // Run analysis
+      const results = await this.aiManager.analyzeBookmarks(bookmarks, options);
+
+      this.updateProgress('Generating results...', 90);
+
+      // Display results
+      this.displayResults(results, bookmarks.length);
+      this.currentResults = { results, bookmarks };
+
+      this.updateProgress('Complete!', 100);
+
+      setTimeout(() => {
+        progressSection.classList.add('hidden');
+      }, 1000);
+
+    } catch (error) {
+      this.showStatus(`Analysis failed: ${error.message}`, 'error');
+      console.error('Analysis error:', error);
+    } finally {
+      startBtn.disabled = false;
+      startBtn.textContent = '🔍 Analyze Bookmarks';
+    }
+  }
+
+  async getBookmarksForAnalysis() {
+    const source = document.getElementById('aiAnalysisSource').value;
+    const tree = await chrome.bookmarks.getTree();
+
+    const bookmarks = [];
+
+    const traverse = (node) => {
+      if (node.url) {
+        bookmarks.push(node);
+      }
+      if (node.children) {
+        node.children.forEach(child => traverse(child));
+      }
+    };
+
+    if (source === 'all') {
+      tree.forEach(node => traverse(node));
+    } else if (source === 'folder') {
+      const folderId = document.getElementById('aiTargetFolder').value;
+      const folder = await chrome.bookmarks.getSubTree(folderId);
+      folder.forEach(node => traverse(node));
+    } else if (source === 'unsorted') {
+      // Find "Other Bookmarks" folder
+      const findOtherBookmarks = (node) => {
+        if (node.title === 'Other Bookmarks' || node.id === '2') {
+          return node;
+        }
+        if (node.children) {
+          for (const child of node.children) {
+            const result = findOtherBookmarks(child);
+            if (result) return result;
+          }
+        }
+        return null;
+      };
+
+      const otherBookmarks = findOtherBookmarks(tree[0]);
+      if (otherBookmarks) {
+        traverse(otherBookmarks);
+      }
+    }
+
+    return bookmarks;
+  }
+
+  displayResults(results, totalBookmarks) {
+    const content = document.getElementById('aiResultsContent');
+    const actions = document.getElementById('aiResultsActions');
+
+    let html = '<div style="margin-bottom: 16px; padding: 12px; background: #f8f9fa; border-radius: 8px;">';
+    html += `<strong>Analysis Complete!</strong> Analyzed ${totalBookmarks} bookmarks.`;
+    html += '</div>';
+
+    // Domain groups
+    if (results.domains.length > 0) {
+      html += '<div style="margin-bottom: 20px;">';
+      html += '<h4>📊 Domain Groups</h4>';
+      html += '<div style="font-size: 12px; color: #666; margin-bottom: 8px;">Bookmarks grouped by website</div>';
+      results.domains.slice(0, 10).forEach(group => {
+        html += `
+          <div style="padding: 10px; border: 1px solid #e9ecef; border-radius: 6px; margin-bottom: 8px;">
+            <div style="font-weight: 600; margin-bottom: 4px;">${group.domain}</div>
+            <div style="font-size: 12px; color: #666;">${group.count} bookmarks</div>
+          </div>
+        `;
+      });
+      if (results.domains.length > 10) {
+        html += `<div style="font-size: 12px; color: #666; margin-top: 8px;">...and ${results.domains.length - 10} more domains</div>`;
+      }
+      html += '</div>';
+    }
+
+    // Topics
+    if (results.topics.length > 0) {
+      html += '<div style="margin-bottom: 20px;">';
+      html += '<h4>🏷️ Topic Categories</h4>';
+      html += '<div style="font-size: 12px; color: #666; margin-bottom: 8px;">AI-suggested topics and folders</div>';
+      results.topics.forEach(topic => {
+        html += `
+          <div style="padding: 12px; border: 1px solid #e9ecef; border-radius: 6px; margin-bottom: 10px; background: #f8f9fa;">
+            <div style="font-weight: 600; margin-bottom: 4px;">${topic.topic}</div>
+            <div style="font-size: 12px; color: #666; margin-bottom: 6px;">${topic.description}</div>
+            <div style="font-size: 12px;">
+              <strong>Suggested folder:</strong> ${topic.suggestedFolder}<br>
+              <strong>Bookmarks:</strong> ${topic.bookmarkIds.length}
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+    }
+
+    // Similar groups
+    if (results.similar.length > 0) {
+      html += '<div style="margin-bottom: 20px;">';
+      html += '<h4>🔗 Similar Bookmarks</h4>';
+      html += '<div style="font-size: 12px; color: #666; margin-bottom: 8px;">Related bookmarks that could be grouped</div>';
+      results.similar.forEach(group => {
+        html += `
+          <div style="padding: 12px; border: 1px solid #e9ecef; border-radius: 6px; margin-bottom: 10px;">
+            <div style="font-weight: 600; margin-bottom: 4px;">${group.groupName}</div>
+            <div style="font-size: 12px; color: #666; margin-bottom: 4px;">${group.reason}</div>
+            <div style="font-size: 12px;"><strong>Count:</strong> ${group.bookmarkIds.length} bookmarks</div>
+          </div>
+        `;
+      });
+      html += '</div>';
+    }
+
+    // Duplicates
+    if (results.duplicates.length > 0) {
+      html += '<div style="margin-bottom: 20px;">';
+      html += '<h4>⚠️ Duplicate Bookmarks</h4>';
+      html += '<div style="font-size: 12px; color: #666; margin-bottom: 8px;">Found ${results.duplicates.length} URLs with multiple bookmarks</div>';
+      results.duplicates.slice(0, 5).forEach(dup => {
+        html += `
+          <div style="padding: 10px; border: 1px solid #ffc107; border-radius: 6px; margin-bottom: 8px; background: #fff8e1;">
+            <div style="font-size: 12px; word-break: break-all; margin-bottom: 4px;">${dup.url}</div>
+            <div style="font-size: 12px; color: #666;"><strong>${dup.count} duplicates</strong></div>
+          </div>
+        `;
+      });
+      if (results.duplicates.length > 5) {
+        html += `<div style="font-size: 12px; color: #666; margin-top: 8px;">...and ${results.duplicates.length - 5} more duplicate sets</div>`;
+      }
+      html += '</div>';
+    }
+
+    content.innerHTML = html;
+    actions.classList.remove('hidden');
+  }
+
+  setupResultsActions() {
+    const applyBtn = document.getElementById('applyAiSuggestions');
+    const exportBtn = document.getElementById('exportAiResults');
+    const clearBtn = document.getElementById('clearAiResults');
+
+    if (applyBtn) {
+      applyBtn.addEventListener('click', () => {
+        this.applySuggestions();
+      });
+    }
+
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => {
+        this.exportResults();
+      });
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        document.getElementById('aiResultsContent').innerHTML = '';
+        document.getElementById('aiResultsActions').classList.add('hidden');
+        this.currentResults = null;
+      });
+    }
+  }
+
+  async applySuggestions() {
+    if (!this.currentResults) return;
+
+    if (!confirm('Apply AI suggestions? This will create folders and move bookmarks.')) {
+      return;
+    }
+
+    const { results } = this.currentResults;
+    let applied = 0;
+
+    try {
+      // Apply topic-based organization
+      for (const topic of results.topics) {
+        // Create folder structure
+        const folderPath = topic.suggestedFolder.split('/');
+        let parentId = '1'; // Bookmarks Bar
+
+        for (const folderName of folderPath) {
+          const existing = await this.findFolder(parentId, folderName);
+          if (existing) {
+            parentId = existing.id;
+          } else {
+            const newFolder = await chrome.bookmarks.create({
+              parentId,
+              title: folderName
+            });
+            parentId = newFolder.id;
+          }
+        }
+
+        // Move bookmarks to this folder
+        for (const bookmarkId of topic.bookmarkIds) {
+          try {
+            await chrome.bookmarks.move(bookmarkId, { parentId });
+            applied++;
+          } catch (e) {
+            console.warn('Failed to move bookmark:', bookmarkId, e);
+          }
+        }
+      }
+
+      this.showStatus(`✓ Applied ${applied} suggestions successfully!`, 'success');
+    } catch (error) {
+      this.showStatus(`Failed to apply suggestions: ${error.message}`, 'error');
+    }
+  }
+
+  async findFolder(parentId, title) {
+    const children = await chrome.bookmarks.getChildren(parentId);
+    return children.find(c => !c.url && c.title === title);
+  }
+
+  exportResults() {
+    if (!this.currentResults) return;
+
+    const data = JSON.stringify(this.currentResults.results, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `bookmark-analysis-${Date.now()}.json`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
+
+  async loadSavedConfig() {
+    const { provider, config } = await this.aiManager.getConfig();
+
+    // Show saved providers hint
+    const allConfigs = await this.aiManager.getAllConfigs();
+    const savedProviders = Object.keys(allConfigs);
+
+    if (savedProviders.length > 0) {
+      const hint = document.getElementById('savedProvidersHint');
+      if (hint) {
+        const providerNames = savedProviders.map(p => {
+          const info = AIManager.getProviderInfo(p);
+          return info ? info.name.split(' ')[0] : p;
+        }).join(', ');
+        hint.textContent = `✓ Saved: ${providerNames}`;
+        hint.style.display = 'inline';
+      }
+    }
+
+    if (provider && config) {
+      const providerSelect = document.getElementById('aiProvider');
+      const apiKeyInput = document.getElementById('aiApiKey');
+      const modelSelect = document.getElementById('aiModel');
+
+      if (providerSelect) {
+        providerSelect.value = provider;
+        providerSelect.dispatchEvent(new Event('change'));
+      }
+
+      if (apiKeyInput && config.apiKey) {
+        apiKeyInput.value = config.apiKey;
+      }
+
+      setTimeout(() => {
+        if (modelSelect && config.model) {
+          modelSelect.value = config.model;
+        }
+      }, 100);
+
+      document.getElementById('aiToolsSection').classList.remove('hidden');
+    }
+  }
+
+  updateProgress(text, percent) {
+    const progressText = document.getElementById('aiProgressText');
+    const progressPercent = document.getElementById('aiProgressPercent');
+    const progressBar = document.getElementById('aiProgressBar');
+
+    if (progressText) progressText.textContent = text;
+    if (progressPercent) progressPercent.textContent = `${percent}%`;
+    if (progressBar) progressBar.style.width = `${percent}%`;
+  }
+
+  showStatus(message, type) {
+    const statusEl = document.getElementById('aiConfigStatus');
+    if (!statusEl) return;
+
+    statusEl.textContent = message;
+    statusEl.className = `status ${type}`;
+    statusEl.classList.remove('hidden');
+
+    setTimeout(() => {
+      statusEl.classList.add('hidden');
+    }, 5000);
   }
 }
 
@@ -6481,5 +7122,6 @@ document.addEventListener('DOMContentLoaded', () => {
   window.optionsManager = app;
   window.optionsApp = app;
   window.featureEnhancements = new FeatureEnhancements();
+  window.aiUI = new AIUserInterface();
   try { app.openRoadmapLink?.(); } catch (_) {}
 });

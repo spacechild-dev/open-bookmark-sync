@@ -1556,11 +1556,11 @@
                     <img src="icons/home.svg" alt="" class="icon">
                     <span>Website</span>
                 </a>
-                <a href="mailto:dagkan@daiquiri.dev?subject=Raindrop%20Browser%20Sync%20-%20Issue%20Report&body=Hi%2C%0A%0AI%20found%20an%20issue%20with%20the%20Raindrop%20Browser%20Sync%20extension%3A%0A%0A%5BPlease%20describe%20the%20issue%20here%5D%0A%0AThanks%21" class="header-link">
+                <a href="mailto:dagkan@spacechild.dev?subject=Raindrop%20Browser%20Sync%20-%20Issue%20Report&body=Hi%2C%0A%0AI%20found%20an%20issue%20with%20the%20Raindrop%20Browser%20Sync%20extension%3A%0A%0A%5BPlease%20describe%20the%20issue%20here%5D%0A%0AThanks%21" class="header-link">
                     <img src="icons/mail.svg" alt="" class="icon">
                     <span>Report Issue</span>
                 </a>
-                <a href="https://github.com/sponsors/daiquiri-98" class="header-link primary" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/sponsors/spacechild-dev" class="header-link primary" target="_blank" rel="noopener noreferrer">
                     <img src="icons/heart.svg" alt="" class="icon">
                     <span>Sponsor</span>
                 </a>
@@ -1585,6 +1585,19 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- AI Organization - TEMPORARILY DISABLED -->
+                <!--
+                <div class="sidebar-section">
+                    <div class="sidebar-title">AI Organization</div>
+                    <div class="sidebar-links">
+                        <button class="side-link" data-tab="ai">
+                            <img src="icons/ai.svg" alt="" class="icon">
+                            AI Organizer
+                        </button>
+                    </div>
+                </div>
+                -->
 
                 <!-- More - Collapsible -->
                 <div class="sidebar-section">
@@ -1617,11 +1630,13 @@
 
             <!-- Floating Action Buttons -->
             <div id="floatingActions" style="position: fixed; bottom: 24px; right: 32px; display: flex; flex-direction: column; gap: 12px; z-index: 1000;">
-                <button id="fabSync" class="fab fab-primary" title="Sync Now (Ctrl+S)">
-                    <img src="icons/sync.svg" alt="Sync" style="width: 20px; height: 20px; filter: brightness(0) invert(1);">
+                <button id="fabSync" class="button btn-lg primary" title="Sync Now (Ctrl+S)" style="box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <img src="icons/sync.svg" alt="" style="width: 16px; height: 16px; filter: brightness(0) invert(1); margin-right: 8px;">
+                    Sync Now
                 </button>
-                <button id="fabBackup" class="fab fab-secondary" title="Backup Now (Ctrl+B)">
-                    <img src="icons/layers.svg" alt="Backup" style="width: 20px; height: 20px; filter: brightness(0) invert(1);">
+                <button id="fabBackup" class="button btn-lg secondary" title="Backup Now (Ctrl+B)" style="box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <img src="icons/layers.svg" alt="" style="width: 16px; height: 16px; margin-right: 8px;">
+                    Backup Now
                 </button>
             </div>
 
@@ -1687,19 +1702,10 @@
                 </div>
 
                 <div id="managedOAuthDetails" class="hidden" style="margin-top: 12px;">
-                    <div id="baseUrlGroup" class="form-group">
-                        <div id="baseUrlLabel" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                            <label for="managedOAuthBaseUrl" style="margin: 0;">OAuth Service URL</label>
-                        </div>
-                        <div class="input-row">
-                            <input type="url" id="managedOAuthBaseUrl" placeholder="https://rdoauth.daiquiri.dev" class="pre-filled" disabled>
-                            <button id="managedBaseEdit" type="button" class="toggle-eye" aria-label="Edit base URL">Edit</button>
-                        </div>
-                        <div class="help-text">
-                            This is the backend authentication service. Visiting it directly shows "not found" - this is normal and expected.
-                            Default is locked; click Edit for manual override (beta/testing).
-                        </div>
-                    </div>
+            <div class="form-group">
+              <label for="managedOAuthBaseUrl">Auth Server URL</label>
+              <input type="url" id="managedOAuthBaseUrl" placeholder="https://rdoauth.daiquiri.dev" class="pre-filled" disabled>
+              <div class="help-text">Using secure managed authentication server</div>
                 </div>
             </div>
             <div id="manualConfigSection" style="margin-top: 16px; padding: 12px; border: 1px solid #e6e9ef; border-radius: 6px; background: #fafbfc;">
@@ -1889,6 +1895,136 @@
                 </div>
             </div>
             </div> <!-- end syncSettings container -->
+        </div>
+
+        <!-- AI Organizer Tab -->
+        <div class="section tab-panel" id="tab-ai" data-tab="ai">
+            <h2>🤖 AI Bookmark Organizer</h2>
+            <p class="help-text">Use AI to intelligently organize, clean, and categorize your bookmarks.</p>
+
+            <!-- AI Provider Configuration -->
+            <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                <h3>🔑 AI Provider Settings</h3>
+
+                <div class="form-group">
+                    <label for="aiProvider">AI Provider</label>
+                    <select id="aiProvider">
+                        <option value="">-- Select Provider --</option>
+                        <option value="claude">Claude (Anthropic)</option>
+                        <option value="openai">OpenAI (GPT-4)</option>
+                        <option value="gemini">Google Gemini</option>
+                    </select>
+                    <div class="help-text">
+                        Choose your preferred AI service. Each provider's API key is saved separately.
+                        <span id="savedProvidersHint" style="display: none; color: #28a745; font-weight: 600;"></span>
+                    </div>
+                </div>
+
+                <div id="aiProviderConfig" class="hidden">
+                    <div class="form-group">
+                        <label for="aiApiKey">API Key</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="password" id="aiApiKey" placeholder="Enter your API key" style="flex: 1;">
+                            <button type="button" id="toggleApiKey" class="button secondary small">Show</button>
+                        </div>
+                        <div class="help-text" id="apiKeyHelp">
+                            Get your API key from: <a href="#" id="apiKeyLink" target="_blank" rel="noopener noreferrer">Provider website</a>
+                            <span id="apiKeyFormat" style="display: none; margin-left: 8px;">• Format: <code id="apiKeyFormatText"></code></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="aiModelGroup">
+                        <label for="aiModel">Model</label>
+                        <select id="aiModel">
+                            <option value="">-- Select Model --</option>
+                        </select>
+                        <div class="help-text">Choose the AI model to use for analysis.</div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" id="saveAiConfig" class="button">Save Configuration</button>
+                        <button type="button" id="testAiConnection" class="button secondary">Test Connection</button>
+                    </div>
+
+                    <div id="aiConfigStatus" class="status hidden"></div>
+                </div>
+            </div>
+
+            <!-- AI Analysis Tools -->
+            <div id="aiToolsSection" class="hidden">
+                <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                    <h3>📊 Smart Analysis</h3>
+
+                    <div class="form-group">
+                        <label>Select Bookmark Source</label>
+                        <select id="aiAnalysisSource">
+                            <option value="all">All Bookmarks</option>
+                            <option value="folder">Specific Folder</option>
+                            <option value="unsorted">Unsorted Only</option>
+                        </select>
+                    </div>
+
+                    <div id="aiFolderSelect" class="form-group hidden">
+                        <label for="aiTargetFolder">Target Folder</label>
+                        <select id="aiTargetFolder"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Analysis Types</label>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="aiAnalyzeDomain" checked>
+                                <span>Domain Grouping - Group by website/domain</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="aiAnalyzeTopic" checked>
+                                <span>Topic Categorization - Identify topics and categories</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="aiAnalyzeSimilar" checked>
+                                <span>Similarity Detection - Find related bookmarks</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="aiAnalyzeDuplicates" checked>
+                                <span>Duplicate Detection - Find exact and near duplicates</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="aiAnalyzeBroken">
+                                <span>Broken Links - Check for dead/invalid URLs</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="button" id="startAiAnalysis" class="button btn-lg" style="width: 100%; margin-top: 12px;">
+                        🔍 Analyze Bookmarks
+                    </button>
+                </div>
+
+                <!-- Results Section -->
+                <div id="aiResultsSection" class="hidden">
+                    <div class="form-group" style="border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                        <h3>📋 Analysis Results</h3>
+
+                        <div id="aiProgress" class="hidden" style="margin: 16px 0;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span id="aiProgressText">Analyzing...</span>
+                                <span id="aiProgressPercent">0%</span>
+                            </div>
+                            <div style="width: 100%; height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden;">
+                                <div id="aiProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.3s;"></div>
+                            </div>
+                        </div>
+
+                        <div id="aiResultsContent"></div>
+
+                        <div id="aiResultsActions" class="hidden" style="display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap;">
+                            <button type="button" id="applyAiSuggestions" class="button">Apply All Suggestions</button>
+                            <button type="button" id="exportAiResults" class="button secondary">Export Results</button>
+                            <button type="button" id="clearAiResults" class="button secondary small">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="section tab-panel" id="tab-tools" data-tab="tools">
@@ -2203,22 +2339,22 @@
                         <img src="icons/home.svg" alt="" class="icon" style="width: 16px; height: 16px;">
                         <span>Website</span>
                     </a>
-                    <a class="header-link" href="https://github.com/daiquiri-98/open-bookmark-sync" target="_blank" rel="noopener noreferrer" style="padding: 10px 12px;">
+                    <a class="header-link" href="https://github.com/spacechild-dev/open-bookmark-sync" target="_blank" rel="noopener noreferrer" style="padding: 10px 12px;">
                         <img src="icons/github.svg" alt="" class="icon" style="width: 16px; height: 16px;">
                         <span>GitHub</span>
                     </a>
-                    <a class="header-link" href="https://github.com/daiquiri-98/open-bookmark-sync/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer" style="padding: 10px 12px;">
+                    <a class="header-link" href="https://github.com/spacechild-dev/open-bookmark-sync/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer" style="padding: 10px 12px;">
                         <img src="icons/lock.svg" alt="" class="icon" style="width: 16px; height: 16px;">
                         <span>Privacy</span>
                     </a>
-                    <a class="header-link" href="https://github.com/daiquiri-98/open-bookmark-sync/blob/main/ROADMAP.md" target="_blank" rel="noopener noreferrer" style="padding: 10px 12px;">
+                    <a class="header-link" href="https://github.com/spacechild-dev/open-bookmark-sync/blob/main/ROADMAP.md" target="_blank" rel="noopener noreferrer" style="padding: 10px 12px;">
                         <img src="icons/layers.svg" alt="" class="icon" style="width: 16px; height: 16px;">
                         <span>Roadmap</span>
                     </a>
                 </div>
 
                 <!-- Report Issue (Full width) -->
-                <a href="mailto:dagkan@daiquiri.dev?subject=Raindrop%20Browser%20Sync%20-%20Issue%20Report&body=Hi%2C%0A%0AI%20found%20an%20issue%20with%20the%20Raindrop%20Browser%20Sync%20extension%3A%0A%0A%5BPlease%20describe%20the%20issue%20here%5D%0A%0AThanks%21" class="header-link" style="padding: 10px 12px; margin-bottom: 20px; display: flex;">
+                <a href="mailto:dagkan@spacechild.dev?subject=Raindrop%20Browser%20Sync%20-%20Issue%20Report&body=Hi%2C%0A%0AI%20found%20an%20issue%20with%20the%20Raindrop%20Browser%20Sync%20extension%3A%0A%0A%5BPlease%20describe%20the%20issue%20here%5D%0A%0AThanks%21" class="header-link" style="padding: 10px 12px; margin-bottom: 20px; display: flex;">
                     <img src="icons/mail.svg" alt="" class="icon" style="width: 16px; height: 16px;">
                     <span>📧 Report an Issue</span>
                 </a>
@@ -2227,7 +2363,11 @@
                 <div style="padding-top: 20px; border-top: 1px solid #e9ecef;">
                     <h4 style="margin: 0 0 12px 0;">💝 Support the Project</h4>
                     <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
-                        <iframe src="https://ghbtns.com/github-btn.html?user=daiquiri-98&repo=open-bookmark-sync&type=sponsor&size=large" frameborder="0" scrolling="0" width="150" height="30" title="GitHub Sponsor"></iframe>
+                        <!-- GitHub Sponsor iframe removed for Chrome Web Store compliance -->
+                        <a href="https://github.com/sponsors/spacechild-dev" target="_blank" rel="noopener noreferrer" style="background: #24292e; color: #fff; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <img src="icons/github.svg" alt="" style="width: 16px; height: 16px;">
+                            <span>Sponsor on GitHub</span>
+                        </a>
                         <a href="https://buymeacoffee.com/daiquiri" target="_blank" rel="noopener noreferrer" style="background: #FFDD00; color: #000; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
                             <img src="icons/coffee.svg" alt="" style="width: 16px; height: 16px;">
                             <span>Buy me a coffee</span>
@@ -2323,6 +2463,7 @@
     </div>
 
     <script src="oauth.js"></script>
+    <script src="ai-manager.js"></script>
     <script src="options.js"></script>
 </body>
 </html>

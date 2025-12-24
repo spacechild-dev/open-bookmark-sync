@@ -111,7 +111,7 @@ Before deploying, please verify:
 
 ## Known Issues
 
-None currently identified. Please report any issues on [GitHub Issues](https://github.com/daiquiri-98/open-bookmark-sync/issues).
+None currently identified. Please report any issues on [GitHub Issues](https://github.com/spacechild-dev/open-bookmark-sync/issues).
 
 ---
 
@@ -121,7 +121,7 @@ None currently identified. Please report any issues on [GitHub Issues](https://g
 Extension is currently under review. Will be available soon at Chrome Web Store.
 
 ### Manual Installation (Development)
-1. Download the latest release: [v1.3.0](https://github.com/daiquiri-98/open-bookmark-sync/releases/tag/v1.3.0)
+1. Download the latest release: [v1.3.0](https://github.com/spacechild-dev/open-bookmark-sync/releases/tag/v1.3.0)
 2. Extract the ZIP file
 3. Open `chrome://extensions`
 4. Enable "Developer mode"
@@ -141,8 +141,8 @@ Special thanks to:
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/daiquiri-98/open-bookmark-sync/issues)
-- **Email**: dagkan@daiquiri.dev
+- **Issues**: [GitHub Issues](https://github.com/spacechild-dev/open-bookmark-sync/issues)
+- **Email**: dagkan@spacechild.dev
 - **Privacy Policy**: [PRIVACY.md](PRIVACY.md)
 - **Roadmap**: [ROADMAP.md](ROADMAP.md)
 
@@ -158,4 +158,4 @@ See our [ROADMAP.md](ROADMAP.md) for upcoming features:
 
 ---
 
-**Full Changelog**: [v1.2.0...v1.3.0](https://github.com/daiquiri-98/open-bookmark-sync/compare/v1.2.0...v1.3.0)
+**Full Changelog**: [v1.2.0...v1.3.0](https://github.com/spacechild-dev/open-bookmark-sync/compare/v1.2.0...v1.3.0)

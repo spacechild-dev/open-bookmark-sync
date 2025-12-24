@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.3.1 - 2025-10-01
+
+### 🔒 Chrome Web Store Compliance Update
+**Critical fix for CWS rejection - Remote code policy compliance**
+
+**Changes**:
+- ✅ Removed remotely hosted code: Replaced GitHub Sponsor iframe with direct link
+- ✅ AI features temporarily disabled (code preserved but UI hidden)
+- ✅ All functionality now self-contained in extension package
+- ✅ No external script dependencies
+
+**Technical Details**:
+- Replaced `<iframe src="https://ghbtns.com/github-btn.html">` with styled anchor link
+- Commented out AI Organization sidebar section in options.html
+- All remote content now accessed via standard `<a>` tags (compliant)
+- Extension remains fully functional with core sync features
+
+**Documentation Updates**:
+- Updated README.md: Removed AI feature references
+- Updated CHANGELOG.md: Added v1.3.1 compliance notes
+- All external links retained for user support and sponsorship
+
+**Violation Reference**: Blue Argon - Additional Requirements for Manifest V3
+**Status**: Ready for Chrome Web Store resubmission
+
+---
+
 ## 1.3.0 - 2025-01-09
 
 ### 🎨 UI Simplification Initiative (Phase 1)

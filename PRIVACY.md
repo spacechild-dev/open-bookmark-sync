@@ -87,9 +87,9 @@ We may update this privacy policy to reflect changes in our practices or for leg
 
 For privacy-related questions or concerns:
 
-- **GitHub Issues**: [https://github.com/daiquiri-98/open-bookmark-sync/issues](https://github.com/daiquiri-98/open-bookmark-sync/issues)
-- **Email**: dagkan@daiquiri.dev
-- **Repository**: [https://github.com/daiquiri-98/open-bookmark-sync](https://github.com/daiquiri-98/open-bookmark-sync)
+- **GitHub Issues**: [https://github.com/spacechild-dev/open-bookmark-sync/issues](https://github.com/spacechild-dev/open-bookmark-sync/issues)
+- **Email**: dagkan@spacechild.dev
+- **Repository**: [https://github.com/spacechild-dev/open-bookmark-sync](https://github.com/spacechild-dev/open-bookmark-sync)
 
 ## Compliance
 
