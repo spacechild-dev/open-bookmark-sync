@@ -7063,41 +7063,32 @@ Browser: ${navigator.userAgent}
   }
 
   // Sync History
-  setupSyncHistory() {
-    const container = document.getElementById('syncHistoryTimeline');
-    const exportBtn = document.getElementById('exportSyncHistory');
+  async refreshSyncHistory() {
+    try {
+      const { syncHistory = [] } = await chrome.storage.local.get(['syncHistory']);
+      const container = document.getElementById('syncHistoryTimeline');
 
-    chrome.storage.local.get(['syncHistory'], ({ syncHistory }) => {
-      if (!syncHistory || syncHistory.length === 0) {
+      if (!container) return; // Guard against missing element
+
+      if (syncHistory.length === 0) {
         container.innerHTML = '<div style="color: #999;">No sync history yet...</div>';
         return;
       }
 
       container.innerHTML = syncHistory.slice(-20).reverse().map(entry => {
-        const color = entry.status === 'success' ? '#10b981' : '#dc3545';
+        const time = new Date(entry.timestamp).toLocaleString();
+        const icon = entry.success ? '✓' : '✗';
+        const color = entry.success ? '#28a745' : '#dc3545';
         return `
-          <div style="padding: 12px; border-left: 3px solid ${color}; margin-bottom: 8px; background: white; border-radius: 4px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-              <span style="font-weight: 600;">${entry.timestamp}</span>
-              <span style="color: ${color};">${entry.status.toUpperCase()}</span>
-            </div>
-            <div style="font-size: 11px; color: #666;">${entry.details || 'No details'}</div>
+          <div style="margin-bottom: 8px; border-left: 3px solid ${color}; padding-left: 8px;">
+            <div style="font-weight: 600;">${icon} ${time}</div>
+            <div style="font-size: 11px; color: #666;">${entry.details || (entry.success ? 'Sync completed' : 'Failed')}</div>
           </div>
         `;
       }).join('');
-    });
-
-    exportBtn?.addEventListener('click', () => {
-      chrome.storage.local.get(['syncHistory'], ({ syncHistory }) => {
-        const blob = new Blob([JSON.stringify(syncHistory, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `sync-history-${Date.now()}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-      });
-    });
+    } catch (e) {
+      console.error('Failed to load sync history:', e);
+    }
   }
 
   addSyncHistoryEntry(status, details) {
