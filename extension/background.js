@@ -1324,60 +1324,66 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
 // Message handler for options page communication
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('Background: Received message:', request.action);
+  try {
+    console.log('Background: Received message:', request.action);
 
-  if (request.action === 'syncNow') {
-    syncManager.syncBookmarks()
-      .then(() => sendResponse({ success: true }))
-      .catch((error) => sendResponse({ success: false, error: error.message }));
-    return true; // Keep message channel open for async response
-  }
+    if (request.action === 'syncNow') {
+      syncManager.syncBookmarks()
+        .then(() => sendResponse({ success: true }))
+        .catch((error) => sendResponse({ success: false, error: error.message }));
+      return true; // Keep message channel open for async response
+    }
 
-  if (request.action === 'getAuthStatus') {
-    console.log('🔐 Background: getAuthStatus request received');
-    chrome.storage.sync.get(['accessToken'])
-      .then(({ accessToken }) => {
-        const isAuthenticated = !!accessToken;
-        console.log(`🔐 Background: Token exists: ${!!accessToken}, responding with authenticated: ${isAuthenticated}`);
-        sendResponse({ authenticated: isAuthenticated });
-      })
-      .catch((error) => {
-        console.error('🔐 Background: getAuthStatus error:', error);
-        sendResponse({ authenticated: false, error: error.message });
-      });
-    return true;
-  }
+    if (request.action === 'getAuthStatus') {
+      console.log('🔐 Background: getAuthStatus request received');
+      chrome.storage.sync.get(['accessToken'])
+        .then(({ accessToken }) => {
+          const isAuthenticated = !!accessToken;
+          console.log(`🔐 Background: Token exists: ${!!accessToken}, responding with authenticated: ${isAuthenticated}`);
+          sendResponse({ authenticated: isAuthenticated });
+        })
+        .catch((error) => {
+          console.error('🔐 Background: getAuthStatus error:', error);
+          sendResponse({ authenticated: false, error: error.message });
+        });
+      return true;
+    }
 
-  if (request.action === 'cleanupDuplicates') {
-    syncManager.getTargetRootId()
-      .then((rootFolderId) => {
-        console.log('cleanupDuplicates: got rootFolderId:', rootFolderId);
-        return syncManager.cleanupAllDuplicates(rootFolderId);
-      })
-      .then((duplicatesRemoved) => {
-        console.log('cleanupDuplicates: completed, removed:', duplicatesRemoved);
-        sendResponse({ success: true, duplicatesRemoved: duplicatesRemoved || 0 });
-      })
-      .catch((error) => {
-        console.error('cleanupDuplicates error:', error);
-        sendResponse({ success: false, error: error?.message || 'Cleanup operation failed' });
-      });
-    return true; // Keep message channel open for async response
-  }
+    if (request.action === 'cleanupDuplicates') {
+      syncManager.getTargetRootId()
+        .then((rootFolderId) => {
+          console.log('cleanupDuplicates: got rootFolderId:', rootFolderId);
+          return syncManager.cleanupAllDuplicates(rootFolderId);
+        })
+        .then((duplicatesRemoved) => {
+          console.log('cleanupDuplicates: completed, removed:', duplicatesRemoved);
+          sendResponse({ success: true, duplicatesRemoved: duplicatesRemoved || 0 });
+        })
+        .catch((error) => {
+          console.error('cleanupDuplicates error:', error);
+          sendResponse({ success: false, error: error?.message || 'Cleanup operation failed' });
+        });
+      return true; // Keep message channel open for async response
+    }
 
-  if (request.action === 'clearAllBookmarks') {
-    syncManager.clearAllSyncedBookmarks()
-      .then((result) => {
-        console.log('clearAllBookmarks: completed, result:', result);
-        const bookmarksDeleted = result?.bookmarksDeleted || 0;
-        sendResponse({ success: true, bookmarksDeleted });
-      })
-      .catch((error) => {
-        console.error('clearAllBookmarks error:', error);
-        sendResponse({ success: false, error: error?.message || 'Clear operation failed' });
-      });
-    return true; // Keep message channel open for async response
+    if (request.action === 'clearAllBookmarks') {
+      syncManager.clearAllSyncedBookmarks()
+        .then((result) => {
+          console.log('clearAllBookmarks: completed, result:', result);
+          const bookmarksDeleted = result?.bookmarksDeleted || 0;
+          sendResponse({ success: true, bookmarksDeleted });
+        })
+        .catch((error) => {
+          console.error('clearAllBookmarks error:', error);
+          sendResponse({ success: false, error: error?.message || 'Clear operation failed' });
+        });
+      return true; // Keep message channel open for async response
+    }
+  } catch (e) {
+    console.error("Critical error in onMessage listener:", e);
+    sendResponse({ success: false, error: "A critical error occurred in the background script." });
   }
+  return true; // Keep channel open for async responses
 });
 // Temporarily disable Managed OAuth flow in background
 const MANAGED_OAUTH_ENABLED = true;
