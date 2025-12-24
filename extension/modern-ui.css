@@ -159,6 +159,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  text-decoration: none;
 }
 
 .button.primary {
@@ -177,6 +178,12 @@ body {
 
 .button.secondary:hover {
   background-color: var(--mantine-color-gray-2);
+}
+
+.button.small {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 12px;
 }
 
 .form-group {
@@ -201,6 +208,8 @@ select {
   border: 1px solid var(--mantine-color-gray-3);
   font-size: 14px;
   outline: none;
+  background-color: var(--mantine-color-white);
+  color: var(--mantine-color-gray-7);
 }
 
 input:focus, select:focus {
@@ -234,4 +243,70 @@ input:focus, select:focus {
   background-color: #fff5f5;
   color: #c92a2a;
   border: 1px solid #ffe3e3;
+}
+
+/* Input Row (Grouped input + button) */
+.input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.input-row input {
+  flex: 1;
+}
+
+.toggle-eye {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--mantine-color-gray-3);
+  background-color: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-md);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--mantine-color-gray-7);
+  font-weight: 500;
+}
+
+.toggle-eye:hover {
+  background-color: var(--mantine-color-gray-1);
+}
+
+/* Auth Status Progress Bar */
+.auth-status {
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: var(--mantine-radius-md);
+  padding: 16px;
+  margin-bottom: 16px;
+  background: var(--mantine-color-white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-bottom: 8px;
+}
+
+.status-indicator.connected { background-color: #40c057; box-shadow: 0 0 8px #40c05766; }
+.status-indicator.disconnected { background-color: #fa5252; }
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--mantine-color-gray-2);
+  border-radius: 2px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--mantine-color-blue-6);
+  width: 0%;
+  transition: width 0.3s ease;
 }
