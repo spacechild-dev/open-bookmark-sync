@@ -1,29 +1,38 @@
 :root {
+  --mantine-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   --mantine-color-white: #fff;
+  --mantine-color-black: #000;
   --mantine-color-gray-0: #f8f9fa;
   --mantine-color-gray-1: #f1f3f5;
   --mantine-color-gray-2: #e9ecef;
   --mantine-color-gray-3: #dee2e6;
+  --mantine-color-gray-4: #ced4da;
+  --mantine-color-gray-5: #adb5bd;
+  --mantine-color-gray-6: #868e96;
   --mantine-color-gray-7: #495057;
-  --mantine-color-blue-6: #228be6;
+  --mantine-color-gray-8: #343a40;
+  --mantine-color-gray-9: #212529;
   --mantine-color-blue-filled: #228be6;
+  --mantine-color-blue-light: #d0ebff;
+  --mantine-color-blue-light-color: #1864ab;
+  --mantine-radius-sm: 4px;
   --mantine-radius-md: 8px;
-  --mantine-radius-lg: 12px;
-  --mantine-shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
-  --mantine-shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  --mantine-shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
   
-  --sidebar-width: 260px;
+  --sidebar-width: 240px;
   --header-height: 60px;
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--mantine-font-family);
   background-color: var(--mantine-color-gray-0);
-  color: var(--mantine-color-gray-7);
+  color: var(--mantine-color-gray-9);
   display: flex;
   height: 100vh;
   overflow: hidden;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
 }
 
 #app-container {
@@ -40,26 +49,25 @@ body {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  padding: var(--mantine-radius-md);
+  box-sizing: border-box;
 }
 
 .sidebar-header {
-  height: var(--header-height);
-  padding: 0 20px;
+  padding: 12px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--mantine-color-gray-2);
 }
 
 .logo-text {
   font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--mantine-color-blue-6);
+  font-size: 18px;
 }
 
 .sidebar-nav {
-  padding: 12px;
   flex: 1;
   overflow-y: auto;
+  margin-top: 16px;
 }
 
 .side-link {
@@ -70,33 +78,29 @@ body {
   margin-bottom: 4px;
   border: none;
   background: transparent;
-  border-radius: var(--mantine-radius-md);
+  border-radius: var(--mantine-radius-sm);
   color: var(--mantine-color-gray-7);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   text-align: left;
-  transition: background-color 0.2s;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .side-link:hover {
-  background-color: var(--mantine-color-gray-1);
+  background-color: var(--mantine-color-gray-0);
 }
 
 .side-link.active {
-  background-color: var(--mantine-color-blue-6);
-  color: var(--mantine-color-white);
+  background-color: var(--mantine-color-blue-light);
+  color: var(--mantine-color-blue-light-color);
+  font-weight: 600;
 }
 
 .side-link .icon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   margin-right: 12px;
-  filter: grayscale(1);
-}
-
-.side-link.active .icon {
-  filter: brightness(0) invert(1);
 }
 
 /* Main Content */
@@ -105,6 +109,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background-color: var(--mantine-color-gray-0);
 }
 
 .content-header {
@@ -115,10 +120,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
 }
 
 .page-title {
-  font-size: 1.2rem;
+  font-size: 20px;
   font-weight: 600;
   margin: 0;
 }
@@ -136,20 +142,21 @@ body {
   border: 1px solid var(--mantine-color-gray-2);
   padding: 20px;
   margin-bottom: 24px;
-  box-shadow: var(--mantine-shadow-sm);
 }
 
 .card-title {
   margin-top: 0;
   margin-bottom: 16px;
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: 600;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+  padding-bottom: 12px;
 }
 
 .button {
   height: 36px;
-  padding: 0 18px;
-  border-radius: var(--mantine-radius-md);
+  padding: 0 16px;
+  border-radius: var(--mantine-radius-sm);
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
@@ -163,7 +170,7 @@ body {
 }
 
 .button.primary {
-  background-color: var(--mantine-color-blue-6);
+  background-color: var(--mantine-color-blue-filled);
   color: white;
 }
 
@@ -172,12 +179,13 @@ body {
 }
 
 .button.secondary {
-  background-color: var(--mantine-color-gray-1);
+  background-color: var(--mantine-color-white);
   color: var(--mantine-color-gray-7);
+  border-color: var(--mantine-color-gray-4);
 }
 
 .button.secondary:hover {
-  background-color: var(--mantine-color-gray-2);
+  background-color: var(--mantine-color-gray-0);
 }
 
 .button.small {
@@ -187,12 +195,12 @@ body {
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-weight: 500;
   font-size: 14px;
 }
@@ -200,26 +208,29 @@ body {
 input[type="text"], 
 input[type="url"], 
 input[type="password"],
+input[type="number"],
 select {
   width: 100%;
   height: 36px;
   padding: 0 12px;
-  border-radius: var(--mantine-radius-md);
-  border: 1px solid var(--mantine-color-gray-3);
+  box-sizing: border-box;
+  border-radius: var(--mantine-radius-sm);
+  border: 1px solid var(--mantine-color-gray-4);
   font-size: 14px;
   outline: none;
   background-color: var(--mantine-color-white);
-  color: var(--mantine-color-gray-7);
+  color: var(--mantine-color-gray-9);
+  transition: border-color 0.2s;
 }
 
 input:focus, select:focus {
-  border-color: var(--mantine-color-blue-6);
+  border-color: var(--mantine-color-blue-filled);
 }
 
 .help-text {
   font-size: 12px;
-  color: #868e96;
-  margin-top: 4px;
+  color: var(--mantine-color-gray-6);
+  margin-top: 6px;
 }
 
 .hidden {
@@ -228,92 +239,27 @@ input:focus, select:focus {
 
 .status {
   padding: 10px 14px;
-  border-radius: var(--mantine-radius-md);
+  border-radius: var(--mantine-radius-sm);
   font-size: 13px;
   margin-top: 12px;
+  border: 1px solid transparent;
 }
 
 .status.success {
   background-color: #ebfbee;
   color: #2b8a3e;
-  border: 1px solid #d3f9d8;
+  border-color: #d3f9d8;
 }
 
 .status.error {
   background-color: #fff5f5;
   color: #c92a2a;
-  border: 1px solid #ffe3e3;
-}
-
-/* Input Row (Grouped input + button) */
-.input-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.input-row input {
-  flex: 1;
-}
-
-.toggle-eye {
-  height: 36px;
-  padding: 0 12px;
-  border: 1px solid var(--mantine-color-gray-3);
-  background-color: var(--mantine-color-gray-0);
-  border-radius: var(--mantine-radius-md);
-  cursor: pointer;
-  font-size: 13px;
-  color: var(--mantine-color-gray-7);
-  font-weight: 500;
-}
-
-.toggle-eye:hover {
-  background-color: var(--mantine-color-gray-1);
-}
-
-/* Auth Status Progress Bar */
-.auth-status {
-  border: 1px solid var(--mantine-color-gray-2);
-  border-radius: var(--mantine-radius-md);
-  padding: 16px;
-  margin-bottom: 16px;
-  background: var(--mantine-color-white);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.status-indicator {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-bottom: 8px;
-}
-
-.status-indicator.connected { background-color: #40c057; box-shadow: 0 0 8px #40c05766; }
-.status-indicator.disconnected { background-color: #fa5252; }
-
-.progress-bar {
-  width: 100%;
-  height: 4px;
-  background: var(--mantine-color-gray-2);
-  border-radius: 2px;
-  margin-top: 12px;
-  overflow: hidden;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background: var(--mantine-color-blue-6);
-  width: 0%;
-  transition: width 0.3s ease;
+  border-color: #ffe3e3;
 }
 
 /* Popup Specific Styles */
 body.popup-mode {
-  width: 320px;
+  width: 340px;
   height: auto;
   display: block;
   overflow: visible;
@@ -332,20 +278,12 @@ body.popup-mode {
   margin-bottom: 16px;
 }
 
-.popup-header h1 {
-  font-size: 16px;
-  margin: 0;
-  font-weight: 700;
-  color: var(--mantine-color-blue-6);
-}
-
 .status-card {
-  background: var(--mantine-color-blue-6);
+  background: var(--mantine-color-blue-filled);
   color: white;
   padding: 16px;
   border-radius: var(--mantine-radius-md);
   margin-bottom: 16px;
-  box-shadow: var(--mantine-shadow-md);
 }
 
 .status-card.disconnected {
@@ -359,12 +297,11 @@ body.popup-mode {
   background: white;
   display: inline-block;
   margin-right: 8px;
-  box-shadow: 0 0 8px rgba(255,255,255,0.8);
 }
 
 .sync-btn-large {
   width: 100%;
-  height: 48px;
+  height: 44px;
   margin-bottom: 12px;
   font-size: 16px;
 }
@@ -378,9 +315,9 @@ body.popup-mode {
 }
 
 .footer-link {
-  color: var(--mantine-color-gray-7);
+  color: var(--mantine-color-gray-6);
   text-decoration: none;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .footer-link:hover {
