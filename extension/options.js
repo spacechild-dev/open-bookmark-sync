@@ -347,12 +347,18 @@ class OptionsManager {
       }
 
       const isHealthy = healthCheck.envCheck && healthCheck.responseTime < 5000;
+      const dot = document.getElementById('workerStatusDot');
 
       if (status) {
         status.textContent = isHealthy
-          ? `✅ Worker OK (${healthCheck.responseTime}ms)`
-          : '❌ Worker has issues';
-        status.style.color = isHealthy ? '#28a745' : '#dc3545';
+          ? `Worker Online (${healthCheck.responseTime}ms)`
+          : 'Worker Offline or Misconfigured';
+        status.style.color = isHealthy ? 'var(--mantine-color-green-7)' : 'var(--mantine-color-red-7)';
+      }
+      
+      if (dot) {
+        dot.style.backgroundColor = isHealthy ? 'var(--mantine-color-green-6)' : 'var(--mantine-color-red-6)';
+        dot.style.boxShadow = isHealthy ? '0 0 0 2px var(--mantine-color-green-1)' : '0 0 0 2px var(--mantine-color-red-1)';
       }
 
       if (!healthCheck.envCheck) {
@@ -370,9 +376,14 @@ class OptionsManager {
       return { healthy: isHealthy, ...healthCheck };
 
     } catch (e) {
+      const dot = document.getElementById('workerStatusDot');
       if (status) {
-        status.textContent = '❌ Worker unreachable';
-        status.style.color = '#dc3545';
+        status.textContent = 'Worker Unreachable';
+        status.style.color = 'var(--mantine-color-red-7)';
+      }
+      if (dot) {
+        dot.style.backgroundColor = 'var(--mantine-color-red-6)';
+        dot.style.boxShadow = '0 0 0 2px var(--mantine-color-red-1)';
       }
 
       const suggestions = [

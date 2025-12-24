@@ -114,16 +114,10 @@ class RaindropOAuth {
     });
 
     // Expect session_code on the redirect back to the extension
-    console.log('Managed OAuth: Redirect URL received:', redirectUrl);
+    console.log('Managed OAuth: Redirect URL received (redacted)');
     const urlParams = new URL(redirectUrl);
     const sessionCode = urlParams.searchParams.get('session_code');
     const error = urlParams.searchParams.get('error');
-
-    console.log('Managed OAuth: Parsed URL params:', {
-      sessionCode,
-      error,
-      allParams: Array.from(urlParams.searchParams.entries())
-    });
 
     if (error) throw new Error(`OAuth error: ${error}`);
     if (!sessionCode) throw new Error('No session code received');
@@ -139,20 +133,16 @@ class RaindropOAuth {
     }
 
     const responseText = await res.text();
-    console.log('Managed OAuth: /auth/fetch raw response:', responseText);
-
     let tokenData;
     try {
       tokenData = JSON.parse(responseText);
     } catch (e) {
-      console.error('Managed OAuth: Invalid JSON response:', responseText);
-      throw new Error(`Worker returned invalid JSON: ${responseText.substring(0, 100)}${responseText.length > 100 ? '...' : ''}`);
+      console.error('Managed OAuth: Invalid JSON response');
+      throw new Error('Worker returned invalid JSON');
     }
 
-    console.log('Managed OAuth: /auth/fetch parsed response:', tokenData);
-
     if (!tokenData || !tokenData.access_token) {
-      console.error('Managed OAuth: /auth/fetch returned unexpected payload:', tokenData);
+      console.error('Managed OAuth: /auth/fetch returned unexpected payload format');
 
       // Check for different possible response formats
       if (tokenData && tokenData.error) {
